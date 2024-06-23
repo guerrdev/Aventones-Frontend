@@ -51,12 +51,12 @@ export default function RiderCRUD() {
     return (
         <>
             <div className={styles.testCRUD}>
-                <Input type="text" variant="bordered" label="First Name" isRequired onChange={(e) => setfName(e.target.value)} />
-                <Input type="text" variant="bordered" label="Last Name" isRequired onChange={(e) => setlName(e.target.value)} />
-                <Input type="text" variant="bordered" label="Cédula" isRequired onChange={(e) => setCedula(e.target.value)} />
-                <DatePicker showMonthAndYearPickers variant="bordered" label="Birth Date" calendarProps={{ onFocusChange: setDob }} onChange={setDob} />
-                <Input type="email" variant="bordered" label="Email" isRequired onChange={(e) => setEmail(e.target.value)} />
-                <Input type="number" variant="bordered" label="Phone Number" isRequired onChange={(e) => setPhone(e.target.value)} />
+                <Input type="text" color="secondary" variant="bordered" label="First Name" isRequired onChange={(e) => setfName(e.target.value)} />
+                <Input type="text" color="secondary" variant="bordered" label="Last Name" isRequired onChange={(e) => setlName(e.target.value)} />
+                <Input type="text" color="secondary" variant="bordered" label="Cédula" isRequired onChange={(e) => setCedula(e.target.value)} />
+                <DatePicker color="secondary" showMonthAndYearPickers variant="bordered" label="Birth Date" calendarProps={{ onFocusChange: setDob }} onChange={setDob} />
+                <Input color="secondary" type="email" variant="bordered" label="Email" isRequired onChange={(e) => setEmail(e.target.value)} />
+                <Input color="secondary" type="number" variant="bordered" label="Phone Number" isRequired onChange={(e) => setPhone(e.target.value)} />
             </div>
             <div className={styles.testPassword}>
                 <Input label="Password" variant="bordered" endContent={
@@ -72,6 +72,7 @@ export default function RiderCRUD() {
                     className="max-w-xs"
                     isRequired
                     onChange={(e) => setPassword(e.target.value)}
+                    color="secondary"
                 />
             </div>
             <br />
