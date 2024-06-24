@@ -1,14 +1,15 @@
 
 import React from "react";
 import { useState } from "react";
-import styles from "./riderCRUD.module.css";
+import styles from "./driverCRUD.module.css";
 import { Button } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 import { today, getLocalTimeZone } from "@internationalized/date";
-import { useLocale, useDateFormatter } from "@react-aria/i18n";
+import { useDateFormatter } from "@react-aria/i18n";
 import { EyeFilledIcon } from "../PasswordEye/EyeFilledIcon.jsx"
 import { EyeSlashFilledIcon } from "../PasswordEye/EyeSlashFilledIcon.jsx"
 import { DatePicker } from "@nextui-org/react";
+import { Card, CardBody } from "@nextui-org/react";
 
 export default function RiderCRUD() {
     let formatter = useDateFormatter({ dateStyle: "short" });
@@ -22,6 +23,10 @@ export default function RiderCRUD() {
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState(Number);
     const [password, setPassword] = useState("");
+    const [model, setModel] = useState("");
+    const [year, setYear] = useState("");
+    const [plate, setPlate] = useState("");
+    const [make, setMake] = useState("");
 
     const handleClick = () => {
         let ndob = formatter.format(dob.toDate(getLocalTimeZone()));
@@ -50,13 +55,33 @@ export default function RiderCRUD() {
     }
     return (
         <>
+            <Card>
+                <CardBody>
+                    <p>Driver Details</p>
+                </CardBody>
+            </Card>
+            <br />
             <div className={styles.testCRUD}>
-                <Input type="text" color="secondary" variant="bordered" label="First Name" isRequired onChange={(e) => setfName(e.target.value)} />
-                <Input type="text" color="secondary" variant="bordered" label="Last Name" isRequired onChange={(e) => setlName(e.target.value)} />
-                <Input type="text" color="secondary" variant="bordered" label="Cédula" isRequired onChange={(e) => setCedula(e.target.value)} />
+                <Input color="secondary" type="text" variant="bordered" label="First Name" isRequired onChange={(e) => setfName(e.target.value)} />
+                <Input color="secondary" type="text" variant="bordered" label="Last Name" isRequired onChange={(e) => setlName(e.target.value)} />
+                <Input color="secondary" type="text" variant="bordered" label="Cédula" isRequired onChange={(e) => setCedula(e.target.value)} />
                 <DatePicker color="secondary" showMonthAndYearPickers variant="bordered" label="Birth Date" calendarProps={{ onFocusChange: setDob }} onChange={setDob} />
                 <Input color="secondary" type="email" variant="bordered" label="Email" isRequired onChange={(e) => setEmail(e.target.value)} />
                 <Input color="secondary" type="number" variant="bordered" label="Phone Number" isRequired onChange={(e) => setPhone(e.target.value)} />
+            </div>
+            <>
+                <Card>
+                    <CardBody>
+                        <p>Car Details</p>
+                    </CardBody>
+                </Card>
+                <br />
+            </>
+            <div className={styles.testCRUD}>
+                <Input color="secondary" type="text" variant="bordered" label="Make" isRequired onChange={(e) => setMake(e.target.value)} />
+                <Input color="secondary" type="text" variant="bordered" label="Model" isRequired onChange={(e) => setModel(e.target.value)} />
+                <Input color="secondary" type="number" variant="bordered" label="Year" isRequired onChange={(e) => setYear(e.target.value)} />
+                <Input color="secondary" type="text" variant="bordered" label="Plate" isRequired onChange={(e) => setPlate(e.target.value)} />
             </div>
             <div className={styles.testPassword}>
                 <Input label="Password" variant="bordered" endContent={

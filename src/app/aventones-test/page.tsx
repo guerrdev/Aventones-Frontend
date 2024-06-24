@@ -1,18 +1,39 @@
 "use client"
 import styles from "./test.module.css";
 import React from "react";
-import { Select, SelectSection, SelectItem } from "@nextui-org/react";
+import { Select, SelectItem } from "@nextui-org/react";
 import RiderCRUD from "../components/riderCRUD/riderCRUD.jsx";
-import { Card, CardHeader, CardBody, CardFooter } from "@nextui-org/react";
+import DriverCRUD from "../components/driverCRUD/driverCRUD.jsx";
+import BookingCRUD from "../components/bookingCRUD/bookingCRUD.jsx";
+import { Card, CardBody } from "@nextui-org/react";
 
 export default function BackendTest() {
+    const [crud, setCrud] = React.useState("driver");
 
     const crudList = [
         { key: "driver", label: "Driver" },
         { key: "rider", label: "Rider" },
-        { key: "booking", label: "Booking" },
-        { key: "vehicle", label: "Vehicle" }
+        { key: "booking", label: "Booking" }
+        // { key: "vehicle", label: "Vehicle" }
     ];
+    const handleSelect = () => {
+        switchCrud();
+    }
+    const switchCrud = () => {
+        switch (crud) {
+            case "driver":
+                return <DriverCRUD />;
+            case "rider":
+                return <RiderCRUD />;
+            case "booking":
+                return <BookingCRUD />;
+            // case "vehicle":
+            //     return <VehicleCRUD />;
+            default:
+                return <div></div>;
+        }
+    }
+
     return (
         <div className={styles.testMain}>
             <h1 className={styles.h1Title}>Aventones Front/Back-end Test July 27th</h1>
@@ -28,6 +49,10 @@ export default function BackendTest() {
                 className="max-w-xs"
                 variant="bordered"
                 color="secondary"
+                onChange={(e) => {
+                    setCrud(e.target.value)
+                    handleSelect()
+                }}
             >
                 {crudList.map((crud) => (
                     <SelectItem key={crud.key}>
@@ -36,7 +61,7 @@ export default function BackendTest() {
                 ))}
             </Select>
             <br />
-            <RiderCRUD />
+            {switchCrud()}
         </div>
     );
 }

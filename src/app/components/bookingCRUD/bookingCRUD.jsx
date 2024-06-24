@@ -1,34 +1,35 @@
 
 import React from "react";
 import { useState } from "react";
-import styles from "./riderCRUD.module.css";
+import styles from "./bookingCRUD.module.css";
 import { Button } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 import { today, getLocalTimeZone } from "@internationalized/date";
-import { useLocale, useDateFormatter } from "@react-aria/i18n";
+import { useDateFormatter } from "@react-aria/i18n";
 import { EyeFilledIcon } from "../PasswordEye/EyeFilledIcon.jsx"
 import { EyeSlashFilledIcon } from "../PasswordEye/EyeSlashFilledIcon.jsx"
 import { DatePicker } from "@nextui-org/react";
+import { Card, CardBody } from "@nextui-org/react";
 
 export default function RiderCRUD() {
     let formatter = useDateFormatter({ dateStyle: "short" });
     let defaultDate = today(getLocalTimeZone());
     const [isVisible, setIsVisible] = React.useState(false);
     const toggleVisibility = () => setIsVisible(!isVisible);
-    const [fName, setfName] = useState("");
-    const [lName, setlName] = useState("");
-    const [cedula, setCedula] = useState("");
-    const [dob, setDob] = useState(defaultDate);
-    const [email, setEmail] = useState("");
-    const [phone, setPhone] = useState(Number);
-    const [password, setPassword] = useState("");
+    const [driver, setDriver] = useState("");
+    const [rider, setRider] = useState("");
+    const [pickup, setPickup] = useState("");
+    const [destination, setDestination] = useState("");
+    const [days, setDays] = useState([]);
+    const [fee, setFee] = useState(Number);
+    const [time, setTime] = useState("");
 
     const handleClick = () => {
-        let ndob = formatter.format(dob.toDate(getLocalTimeZone()));
+        let ndob = formatter.format(destination.toDate(getLocalTimeZone()));
         let rider = {
-            first_name: fName,
-            last_name: lName,
-            cedula: cedula,
+            first_name: driver,
+            last_name: rider,
+            cedula: pickup,
             dob: ndob,
             email: email,
             phone: phone,
@@ -50,13 +51,35 @@ export default function RiderCRUD() {
     }
     return (
         <>
+            <Card>
+                <CardBody>
+                    <p>Aventon's Details</p>
+                </CardBody>
+            </Card>
+            <br />
             <div className={styles.testCRUD}>
-                <Input type="text" color="secondary" variant="bordered" label="First Name" isRequired onChange={(e) => setfName(e.target.value)} />
-                <Input type="text" color="secondary" variant="bordered" label="Last Name" isRequired onChange={(e) => setlName(e.target.value)} />
-                <Input type="text" color="secondary" variant="bordered" label="Cédula" isRequired onChange={(e) => setCedula(e.target.value)} />
-                <DatePicker color="secondary" showMonthAndYearPickers variant="bordered" label="Birth Date" calendarProps={{ onFocusChange: setDob }} onChange={setDob} />
+                <Input color="secondary" type="text" variant="bordered" label="Driver" isRequired onChange={(e) => setDriver(e.target.value)} />
+                <Input color="secondary" type="text" variant="bordered" label="Rider" isRequired onChange={(e) => setRider(e.target.value)} />
+                <Input color="secondary" type="text" variant="bordered" label="Pickup" isRequired onChange={(e) => setPickup(e.target.value)} />
+                <Input color="secondary" type="text" variant="bordered" label="Destination" isRequired onChange={(e) => setDestination(e.target.value)} />
+                <Input color="secondary" type="Number" variant="bordered" label="Fee" isRequired onChange={(e) => setFee(e.target.value)} />
+                {/* <DatePicker color="secondary" showMonthAndYearPickers variant="bordered" label="Birth Date" calendarProps={{ onFocusChange: setDestination }} onChange={setDestination} /> */}
                 <Input color="secondary" type="email" variant="bordered" label="Email" isRequired onChange={(e) => setEmail(e.target.value)} />
                 <Input color="secondary" type="number" variant="bordered" label="Phone Number" isRequired onChange={(e) => setPhone(e.target.value)} />
+            </div>
+            <>
+                <Card>
+                    <CardBody>
+                        <p>Car Details</p>
+                    </CardBody>
+                </Card>
+                <br />
+            </>
+            <div className={styles.testCRUD}>
+                <Input color="secondary" type="text" variant="bordered" label="Make" isRequired onChange={(e) => setMake(e.target.value)} />
+                <Input color="secondary" type="text" variant="bordered" label="Model" isRequired onChange={(e) => setModel(e.target.value)} />
+                <Input color="secondary" type="number" variant="bordered" label="Year" isRequired onChange={(e) => setYear(e.target.value)} />
+                <Input color="secondary" type="text" variant="bordered" label="Plate" isRequired onChange={(e) => setPlate(e.target.value)} />
             </div>
             <div className={styles.testPassword}>
                 <Input label="Password" variant="bordered" endContent={
@@ -80,3 +103,6 @@ export default function RiderCRUD() {
         </>
     );
 }
+// days : { type: Array },
+// fee : { type: Number },
+// time : { type: String }
