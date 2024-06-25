@@ -5,6 +5,7 @@ import { Select, SelectItem } from "@nextui-org/react";
 import RiderCRUD from "../components/riderCRUD/riderCRUD.jsx";
 import DriverCRUD from "../components/driverCRUD/driverCRUD.jsx";
 import BookingCRUD from "../components/bookingCRUD/bookingCRUD.jsx";
+import VehicleCRUD from "../components/vehicleCRUD/vehicleCRUD.jsx"
 import { Card, CardBody } from "@nextui-org/react";
 
 export default function BackendTest() {
@@ -13,8 +14,8 @@ export default function BackendTest() {
     const crudList = [
         { key: "driver", label: "Driver" },
         { key: "rider", label: "Rider" },
-        { key: "booking", label: "Booking" }
-        // { key: "vehicle", label: "Vehicle" }
+        { key: "booking", label: "Booking" },
+        { key: "vehicle", label: "Vehicle" }
     ];
     const handleSelect = () => {
         switchCrud();
@@ -27,8 +28,8 @@ export default function BackendTest() {
                 return <RiderCRUD />;
             case "booking":
                 return <BookingCRUD />;
-            // case "vehicle":
-            //     return <VehicleCRUD />;
+            case "vehicle":
+                 return <VehicleCRUD />;
             default:
                 return <div>
                     <Card>
