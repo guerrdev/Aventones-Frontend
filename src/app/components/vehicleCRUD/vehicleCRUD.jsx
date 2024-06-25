@@ -4,10 +4,10 @@ import { Button, Input, Card, CardBody } from "@nextui-org/react";
 
 export default function VehicleCRUD() {
     const [model, setModel] = useState("");
-    const [year, setYear] = useState<number | undefined>(undefined);
+    const [year, setYear] = useState(Number);
     const [plate, setPlate] = useState("");
     const [make, setMake] = useState("");
-    const [seats, setSeats] = useState<number | undefined>(undefined);
+    const [seats, setSeats] = useState(Number);
 
     const handleClick = () => {
         let vehicle = {
