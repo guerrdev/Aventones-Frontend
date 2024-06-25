@@ -53,7 +53,7 @@ export default function RiderCRUD() {
         <>
             <Card>
                 <CardBody>
-                    <p>Aventon's Details</p>
+                    <p>Aventons Details</p>
                 </CardBody>
             </Card>
             <br />

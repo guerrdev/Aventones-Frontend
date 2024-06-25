@@ -8,7 +8,7 @@ import BookingCRUD from "../components/bookingCRUD/bookingCRUD.jsx";
 import { Card, CardBody } from "@nextui-org/react";
 
 export default function BackendTest() {
-    const [crud, setCrud] = React.useState("driver");
+    const [crud, setCrud] = React.useState("");
 
     const crudList = [
         { key: "driver", label: "Driver" },
@@ -30,13 +30,19 @@ export default function BackendTest() {
             // case "vehicle":
             //     return <VehicleCRUD />;
             default:
-                return <div></div>;
+                return <div>
+                    <Card>
+                        <CardBody>
+                            <p>Please select a CRUD to start</p>
+                        </CardBody>
+                    </Card>
+                </div>;
         }
     }
 
     return (
         <div className={styles.testMain}>
-            <h1 className={styles.h1Title}>Aventones Front/Back-end Test July 27th</h1>
+            <h1 className={styles.h1Title}>Aventones Front/Back-end Test July 25th</h1>
             <Card>
                 <CardBody>
                     <p>This Website is on active development, expect changes.</p>
@@ -45,7 +51,6 @@ export default function BackendTest() {
             <br />
             <Select
                 label="CRUD"
-                placeholder="Select a CRUD"
                 className="max-w-xs"
                 variant="bordered"
                 color="secondary"
