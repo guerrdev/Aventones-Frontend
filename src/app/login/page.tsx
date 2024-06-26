@@ -6,6 +6,9 @@ import { Button } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 import { Image } from "@nextui-org/react";
 import { useRouter } from 'next/navigation'
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 import { EyeFilledIcon } from "../components/PasswordEye/EyeFilledIcon.jsx"
 import { EyeSlashFilledIcon } from "../components/PasswordEye/EyeSlashFilledIcon.jsx"
 
@@ -25,6 +28,15 @@ export default function RiderCRUD() {
         postSession(loginRider);
     }
 
+    const toastNOK = () =>
+        toast('Check Login and Password', {
+            hideProgressBar: true,
+            autoClose: 2000,
+            type: 'error',
+            theme: 'dark',
+            position: 'top-left'
+        });
+
     const postSession = async (loginRider: { email: string; password: string; }) => {
         const response = await fetch("http://127.0.0.1:3001/authentication", {
             method: "POST",
@@ -41,7 +53,7 @@ export default function RiderCRUD() {
             //toast
             // router.push('/aventones-test')
         } else {
-            alert("No silve eta vaina");
+            toastNOK();
             //toast
         }
     }
@@ -75,6 +87,7 @@ export default function RiderCRUD() {
                     color="secondary"
                 />
                 <br />
+                <ToastContainer />
                 <Button variant="ghost" color="secondary" onClick={handleClick}>Login</Button>
             </div>
         </>
