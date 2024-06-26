@@ -37,10 +37,12 @@ export default function RiderCRUD() {
         postData(rider);
     }
     const postData = async (rider) => {
+        const token = sessionStorage.getItem('token');
         const response = await fetch("http://127.0.0.1:3001/riders", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify(rider)
         });

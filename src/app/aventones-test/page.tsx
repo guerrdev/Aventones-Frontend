@@ -29,7 +29,7 @@ export default function BackendTest() {
             case "booking":
                 return <BookingCRUD />;
             case "vehicle":
-                 return <VehicleCRUD />;
+                return <VehicleCRUD />;
             default:
                 return <div>
                     <Card>
