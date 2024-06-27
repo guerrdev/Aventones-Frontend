@@ -4,10 +4,13 @@ import { useState } from "react";
 import styles from "./riderCRUD.module.css";
 import { Button } from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
-import { today, getLocalTimeZone } from "@internationalized/date";
-import { useLocale, useDateFormatter } from "@react-aria/i18n";
-import { EyeFilledIcon } from "../PasswordEye/EyeFilledIcon.jsx"
-import { EyeSlashFilledIcon } from "../PasswordEye/EyeSlashFilledIcon.jsx"
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
+import { today, getLocalTimeZone, CalendarDate } from "@internationalized/date";
+import { useDateFormatter } from "@react-aria/i18n";
+import { EyeFilledIcon } from "../PasswordEye/EyeFilledIcon"
+import { EyeSlashFilledIcon } from "../PasswordEye/EyeSlashFilledIcon"
 import { DatePicker } from "@nextui-org/react";
 
 export default function RiderCRUD() {
@@ -20,8 +23,25 @@ export default function RiderCRUD() {
     const [cedula, setCedula] = useState("");
     const [dob, setDob] = useState(defaultDate);
     const [email, setEmail] = useState("");
-    const [phone, setPhone] = useState(Number);
+    const [phone, setPhone] = useState<number>(0);
     const [password, setPassword] = useState("");
+
+    const toastNOK = () =>
+        toast('Not Authorized, please log In', {
+            hideProgressBar: true,
+            autoClose: 2000,
+            type: 'error',
+            theme: 'dark',
+            position: 'top-left'
+        });
+    const toastOK = () =>
+        toast('Rider Created!', {
+            hideProgressBar: true,
+            autoClose: 2000,
+            type: 'success',
+            theme: 'dark',
+            position: 'top-left'
+        });
 
     const handleClick = () => {
         let ndob = formatter.format(dob.toDate(getLocalTimeZone()));
@@ -36,7 +56,7 @@ export default function RiderCRUD() {
         }
         postData(rider);
     }
-    const postData = async (rider) => {
+    const postData = async (rider: { first_name: string; last_name: string; cedula: string; dob: string; email: string; phone: number; password: string; }) => {
         const token = sessionStorage.getItem('token');
         const response = await fetch("http://127.0.0.1:3001/riders", {
             method: "POST",
@@ -47,8 +67,12 @@ export default function RiderCRUD() {
             body: JSON.stringify(rider)
         });
         const data = await response.json();
-        console.log("Data From NEXT.js", rider);
-        console.log("Data From Aventones API", data);
+        if (response && response.status == 201) {
+            console.log('Rider Created', data);
+            toastOK();
+        } else {
+            toastNOK();
+        }
     }
     return (
         <>
@@ -56,9 +80,9 @@ export default function RiderCRUD() {
                 <Input type="text" color="secondary" variant="bordered" label="First Name" isRequired onChange={(e) => setfName(e.target.value)} />
                 <Input type="text" color="secondary" variant="bordered" label="Last Name" isRequired onChange={(e) => setlName(e.target.value)} />
                 <Input type="text" color="secondary" variant="bordered" label="Cédula" isRequired onChange={(e) => setCedula(e.target.value)} />
-                <DatePicker color="secondary" showMonthAndYearPickers variant="bordered" label="Birth Date" calendarProps={{ onFocusChange: setDob }} onChange={setDob} />
+                <DatePicker color="secondary" showMonthAndYearPickers variant="bordered" label="Birth Date" calendarProps={{ onFocusChange: setDob }} onChange={(value) => setDob(value as CalendarDate)} />
                 <Input color="secondary" type="email" variant="bordered" label="Email" isRequired onChange={(e) => setEmail(e.target.value)} />
-                <Input color="secondary" type="number" variant="bordered" label="Phone Number" isRequired onChange={(e) => setPhone(e.target.value)} />
+                <Input color="secondary" type="number" variant="bordered" label="Phone Number" isRequired onChange={(e) => setPhone(Number(e.target.value))} />
             </div>
             <div className={styles.testPassword}>
                 <Input label="Password" variant="bordered" endContent={
@@ -78,6 +102,7 @@ export default function RiderCRUD() {
                 />
             </div>
             <br />
+            <ToastContainer />
             <Button variant="ghost" color="secondary" onClick={handleClick}>Post Data</Button>
         </>
     );

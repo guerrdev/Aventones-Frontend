@@ -1,32 +1,42 @@
 'use client'
-import React from "react";
-import { useState } from "react";
 import styles from "./login.module.css";
-import { Button } from "@nextui-org/react";
-import { Input } from "@nextui-org/react";
-import { Image } from "@nextui-org/react";
+import React, { useEffect, useState } from "react";
+import { Button, Input, Image, RadioGroup, Radio } from "@nextui-org/react";
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify';
+import { useAuth } from "../AuthContext";
+import { jwtDecode } from "jwt-decode";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
-import { EyeFilledIcon } from "../components/PasswordEye/EyeFilledIcon.jsx"
-import { EyeSlashFilledIcon } from "../components/PasswordEye/EyeSlashFilledIcon.jsx"
+import { EyeFilledIcon } from "../components/PasswordEye/EyeFilledIcon"
+import { EyeSlashFilledIcon } from "../components/PasswordEye/EyeSlashFilledIcon"
 
 export default function RiderCRUD() {
 
+    const [selected, setSelected] = React.useState("riderauth");
+    const { isLogged, setIsLogged } = useAuth();
     const router = useRouter()
     const [isVisible, setIsVisible] = React.useState(false);
     const toggleVisibility = () => setIsVisible(!isVisible);
-    const [email, setEmail] = useState("");
+    const [uemail, setUemail] = useState("");
     const [password, setPassword] = useState("");
 
     const handleClick = () => {
         let loginRider = {
-            email: email,
+            email: uemail,
             password: password
         }
         postSession(loginRider);
     }
+
+    const toastOK = () =>
+        toast('You are already logged In', {
+            hideProgressBar: true,
+            autoClose: 2000,
+            type: 'info',
+            theme: 'dark',
+            position: 'top-left'
+        });
 
     const toastNOK = () =>
         toast('Check Login and Password', {
@@ -34,11 +44,11 @@ export default function RiderCRUD() {
             autoClose: 2000,
             type: 'error',
             theme: 'dark',
-            position: 'top-left'
+            position: 'top-left',
         });
 
     const postSession = async (loginRider: { email: string; password: string; }) => {
-        const response = await fetch("http://127.0.0.1:3001/authentication", {
+        const response = await fetch("http://10.0.0.2:3001/" + selected, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -46,17 +56,26 @@ export default function RiderCRUD() {
             body: JSON.stringify(loginRider)
         });
         if (response && response.status == 201) {
-            const token = await response.json();
-            console.log('token saved', token);
-            sessionStorage.setItem('token', token.session.token);
-            alert(`Welcome ${token.session.user}`);
-            //toast
-            // router.push('/aventones-test')
+            const data = await response.json();
+            console.log('User logged', 'email:', data.user);
+            console.log('Token', 'token:', data.token);
+            const decodedToken: { email: string } = jwtDecode(data.token);
+            console.log('Decoded Token', decodedToken);
+            const userEmail = decodedToken.email;
+            setIsLogged(true);
+            document.cookie = `isLogged=${true}; max-age=86400; path=/`;
+            document.cookie = `token=${data.token}; max-age=86400; path=/`;
+            document.cookie = `authEmail=${userEmail}; max-age=86400; path=/`;
         } else {
             toastNOK();
-            //toast
         }
     }
+    useEffect(() => {
+        if (isLogged) {
+            router.push('/');
+        }
+    }, [isLogged, router]);
+
     return (
         <>
             <div className={styles.loginMain}>
@@ -69,7 +88,7 @@ export default function RiderCRUD() {
                 />
                 <h1 className={styles.h1Title}>Sign In into Aventones</h1>
                 <br />
-                <Input className="max-w-xs" type="text" color="secondary" variant="bordered" label="Email" isRequired onChange={(e) => setEmail(e.target.value)} />
+                <Input className="max-w-xs" type="text" color="secondary" variant="bordered" label="Email" isRequired onChange={(e) => setUemail(e.target.value)} />
                 <br />
                 <Input label="Password" variant="bordered" endContent={
                     <button id={styles.eyeButton} className="focus:outline-none" type="button" onClick={toggleVisibility}>
@@ -88,8 +107,20 @@ export default function RiderCRUD() {
                 />
                 <br />
                 <ToastContainer />
-                <Button variant="ghost" color="secondary" onClick={handleClick}>Login</Button>
+                <RadioGroup
+                    label="Are you a Rider or a Driver?"
+                    orientation="horizontal"
+                    value={selected}
+                    onValueChange={setSelected}
+                    color="secondary"
+                >
+                    <Radio value="riderauth">Rider</Radio>
+                    <Radio value="driverauth">Driver</Radio>
+                </RadioGroup>
+                <br />
+                <Button size="lg" variant="ghost" color="secondary" onPress={handleClick}>Login</Button>
             </div>
+            <ToastContainer />
         </>
     );
 }

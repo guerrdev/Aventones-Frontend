@@ -2,10 +2,10 @@
 import styles from "./test.module.css";
 import React from "react";
 import { Select, SelectItem } from "@nextui-org/react";
-import RiderCRUD from "../components/riderCRUD/riderCRUD.jsx";
-import DriverCRUD from "../components/driverCRUD/driverCRUD.jsx";
-import BookingCRUD from "../components/bookingCRUD/bookingCRUD.jsx";
-import VehicleCRUD from "../components/vehicleCRUD/vehicleCRUD.jsx"
+import RiderCRUD from "../components/riderCRUD/riderCRUD";
+import DriverCRUD from "../components/driverCRUD/driverCRUD";
+import BookingCRUD from "../components/bookingCRUD/bookingCRUD";
+import VehicleCRUD from "../components/vehicleCRUD/vehicleCRUD";
 import { Card, CardBody } from "@nextui-org/react";
 
 export default function BackendTest() {

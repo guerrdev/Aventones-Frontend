@@ -1,15 +1,15 @@
 
-import React from "react";
+import React, { SetStateAction } from "react";
 import { useState } from "react";
 import styles from "./driverCRUD.module.css";
-import { Button } from "@nextui-org/react";
-import { Input } from "@nextui-org/react";
-import { today, getLocalTimeZone } from "@internationalized/date";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
+import { today, getLocalTimeZone, DateValue, CalendarDate } from "@internationalized/date";
 import { useDateFormatter } from "@react-aria/i18n";
-import { EyeFilledIcon } from "../PasswordEye/EyeFilledIcon.jsx"
-import { EyeSlashFilledIcon } from "../PasswordEye/EyeSlashFilledIcon.jsx"
-import { DatePicker } from "@nextui-org/react";
-import { Card, CardBody } from "@nextui-org/react";
+import { EyeFilledIcon } from "../PasswordEye/EyeFilledIcon"
+import { EyeSlashFilledIcon } from "../PasswordEye/EyeSlashFilledIcon"
+import { Card, CardBody, DatePicker, Input,Button } from "@nextui-org/react";
 
 export default function RiderCRUD() {
     let formatter = useDateFormatter({ dateStyle: "short" });
@@ -21,7 +21,7 @@ export default function RiderCRUD() {
     const [cedula, setCedula] = useState("");
     const [dob, setDob] = useState(defaultDate);
     const [email, setEmail] = useState("");
-    const [phone, setPhone] = useState(Number);
+    const [phone, setPhone] = useState<number>(0);
     const [password, setPassword] = useState("");
     const [model, setModel] = useState("");
     const [year, setYear] = useState("");
@@ -30,28 +30,56 @@ export default function RiderCRUD() {
 
     const handleClick = () => {
         let ndob = formatter.format(dob.toDate(getLocalTimeZone()));
-        let rider = {
+        let driver = {
             first_name: fName,
             last_name: lName,
             cedula: cedula,
             dob: ndob,
             email: email,
             phone: phone,
+            model: model,
+            plate: plate,
+            year: year,
+            make: make,
             password: password
         }
-        postData(rider);
+        postData(driver);
     }
-    const postData = async (rider) => {
-        const response = await fetch("http://127.0.0.1:3001/riders", {
+
+    const toastNOK = () =>
+        toast('Not Authorized, please log In', {
+            hideProgressBar: true,
+            autoClose: 2000,
+            type: 'error',
+            theme: 'dark',
+            position: 'top-left'
+        });
+    const toastOK = () =>
+        toast('Rider Created!', {
+            hideProgressBar: true,
+            autoClose: 2000,
+            type: 'success',
+            theme: 'dark',
+            position: 'top-left'
+        });
+
+    const postData = async (driver: { first_name: string; last_name: string; cedula: string; dob: string; email: string; phone: number; model: string; plate: string; year: string; make: string; password: string; }) => {
+        const token = sessionStorage.getItem('token');
+        const response = await fetch("http://127.0.0.1:3001/drivers", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
             },
-            body: JSON.stringify(rider)
+            body: JSON.stringify(driver)
         });
         const data = await response.json();
-        console.log("Data From NEXT.js", rider);
-        console.log("Data From Aventones API", data);
+        if (response && response.status == 201) {
+            console.log('Driver Created', data);
+            toastOK();
+        } else {
+            toastNOK();
+        }
     }
     return (
         <>
@@ -65,9 +93,9 @@ export default function RiderCRUD() {
                 <Input color="secondary" type="text" variant="bordered" label="First Name" isRequired onChange={(e) => setfName(e.target.value)} />
                 <Input color="secondary" type="text" variant="bordered" label="Last Name" isRequired onChange={(e) => setlName(e.target.value)} />
                 <Input color="secondary" type="text" variant="bordered" label="Cédula" isRequired onChange={(e) => setCedula(e.target.value)} />
-                <DatePicker color="secondary" showMonthAndYearPickers variant="bordered" label="Birth Date" calendarProps={{ onFocusChange: setDob }} onChange={setDob} />
+                <DatePicker color="secondary" showMonthAndYearPickers variant="bordered" label="Birth Date" calendarProps={{ onFocusChange: setDob }} onChange={(value: DateValue) => setDob(value as SetStateAction<CalendarDate>)} />
                 <Input color="secondary" type="email" variant="bordered" label="Email" isRequired onChange={(e) => setEmail(e.target.value)} />
-                <Input color="secondary" type="number" variant="bordered" label="Phone Number" isRequired onChange={(e) => setPhone(e.target.value)} />
+                <Input color="secondary" type="number" variant="bordered" label="Phone Number" isRequired onChange={(e) => setPhone(Number(e.target.value))} />
             </div>
             <>
                 <Card>
@@ -101,6 +129,7 @@ export default function RiderCRUD() {
                 />
             </div>
             <br />
+            <ToastContainer />
             <Button variant="ghost" color="secondary" onClick={handleClick}>Post Data</Button>
         </>
     );
