@@ -6,12 +6,43 @@ import styles from "./settings.module.css";
 import { useRouter } from 'next/navigation'
 import { ToastContainer } from 'react-toastify';
 import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/react";
+import { jwtDecode } from 'jwt-decode';
 
 export default function RiderCRUD() {
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
-    const { isLogged, setIsLogged } = useAuth();
+    const { isLogged, setIsLogged, setEmail } = useAuth();
     const router = useRouter();
+
+    const getToken = () => {
+        const tokenRow = document.cookie.split(';').find((row) => row.trim().startsWith('token='));
+        if (tokenRow) {
+            return tokenRow.split('=')[1];
+        }
+        return null; // or return a default value or handle the absence of the token as needed
+    }
+
+    const deleteAccount = async () => {
+        const token = getToken();
+        const decodedToken: { email: string; role: string; } = jwtDecode(token as string);
+                console.log(decodedToken.email, decodedToken.role);
+        // const response = await fetch("http://127.0.0.1:3001/auth", {
+        //     method: "DELETE",
+        //     headers: {
+        //         "Content-Type": "application/json",
+        //         'Authorization': `Bearer ${token}`
+        //     }
+        // });
+        // if (response && response.status == 204) {
+        //     setIsLogged(false);
+        //     setEmail("");
+        //     document.cookie = `isLogged=${false}; max-age=0; path=/`;
+        //     document.cookie = `token=; max-age=0; path=/`;
+        //     document.cookie = `authEmail=; max-age=0; path=/`;
+        //     await new Promise(resolve => setTimeout(resolve, 500));
+        //     window.location.reload();
+        // }
+    }
 
     const toastOK = () =>
         toast('You are already logged In', {
@@ -32,7 +63,7 @@ export default function RiderCRUD() {
         });
 
     useEffect(() => {
-        if (!isLogged) {
+        if (!isLogged && router) {
             router.push('/login');
         }
     }, [isLogged, router]);
@@ -53,9 +84,9 @@ export default function RiderCRUD() {
                                 </ModalBody>
                                 <ModalFooter>
                                     <Button color="secondary" variant="ghost" onPress={onClose}>
-                                        No
+                                        Cancel
                                     </Button>
-                                    <Button color="danger" variant="ghost" onPress={() => { onClose()/*something to delete its own account*/ }}>
+                                    <Button color="danger" variant="ghost" onPress={() => { deleteAccount(); onClose()/*something to delete its own account*/ }}>
                                         Yes
                                     </Button>
                                 </ModalFooter>

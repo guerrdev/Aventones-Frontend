@@ -39,7 +39,7 @@ export default function LoginPage() {
         });
 
     const postSession = async (user: { email: string; password: string; type: string; }) => {
-        const response = await fetch("http://10.0.0.2:3001/auth", {
+        const response = await fetch("http://127.0.0.1:3001/auth", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -76,12 +76,12 @@ export default function LoginPage() {
                 {selected === "rider" ? (<Image
                     isBlurred
                     width={64}
-                    src="/user-light.png"
+                    src="/user-light64.png"
                     alt="Aventones' Car Logo"
                 />) : (<Image
                     isBlurred
                     width={240}
-                    src="/logo-aventones-light.png"
+                    src="/logo-aventones-light240.png"
                     alt="Aventones' Car Logo"
                 />)}
                 <h1 className={styles.h1Title}>Login In into Aventones</h1>
