@@ -3,6 +3,7 @@ import styles from "./page.module.css";
 import BookingTable from "./components/bookingTable/bookingTable";
 
 export default function Home() {
+
   return (
     <main className={styles.main}>
       <h1>Aventones Available</h1>
@@ -11,7 +12,7 @@ export default function Home() {
 <br />
         Powered by{" "}
         <span className={styles.center}>
-          Aventones Inc
+          Aventones. Inc
         </span>
       </div>
     </main>

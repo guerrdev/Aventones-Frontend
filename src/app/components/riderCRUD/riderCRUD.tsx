@@ -1,19 +1,21 @@
-
-import React from "react";
-import { useState } from "react";
-import styles from "./riderCRUD.module.css";
-import { Button } from "@nextui-org/react";
-import { Input } from "@nextui-org/react";
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useState } from "react";
+import { useRouter } from 'next/navigation'
+import styles from "./riderCRUD.module.css";
 import { ToastContainer } from 'react-toastify';
-import { today, getLocalTimeZone, CalendarDate } from "@internationalized/date";
 import { useDateFormatter } from "@react-aria/i18n";
 import { EyeFilledIcon } from "../PasswordEye/EyeFilledIcon"
 import { EyeSlashFilledIcon } from "../PasswordEye/EyeSlashFilledIcon"
-import { DatePicker } from "@nextui-org/react";
+import { Card, CardBody,Button, Input, DatePicker } from "@nextui-org/react";
+import { today, getLocalTimeZone, CalendarDate } from "@internationalized/date";
 
-export default function RiderCRUD() {
+interface RiderCRUDProps {
+    TextProps: string;
+}
+
+const RiderCRUD: React.FC<RiderCRUDProps> = ({ TextProps }) => {
+
+    const Router = useRouter()
     let formatter = useDateFormatter({ dateStyle: "short" });
     let defaultDate = today(getLocalTimeZone());
     const [isVisible, setIsVisible] = React.useState(false);
@@ -26,16 +28,8 @@ export default function RiderCRUD() {
     const [phone, setPhone] = useState<number>(0);
     const [password, setPassword] = useState("");
 
-    const toastNOK = () =>
-        toast('Not Authorized, please log In', {
-            hideProgressBar: true,
-            autoClose: 2000,
-            type: 'error',
-            theme: 'dark',
-            position: 'top-left'
-        });
     const toastOK = () =>
-        toast('Rider Created!', {
+        toast('Thanks for registering, now you may log In!', {
             hideProgressBar: true,
             autoClose: 2000,
             type: 'success',
@@ -54,28 +48,31 @@ export default function RiderCRUD() {
             phone: phone,
             password: password
         }
-        postData(rider);
+        createRider(rider);
     }
-    const postData = async (rider: { first_name: string; last_name: string; cedula: string; dob: string; email: string; phone: number; password: string; }) => {
-        const token = sessionStorage.getItem('token');
-        const response = await fetch("http://127.0.0.1:3001/riders", {
+    const createRider = async (rider: { first_name: string; last_name: string; cedula: string; dob: string; email: string; phone: number; password: string; }) => {
+        const response = await fetch("http://127.0.0.1:3001/rider", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
+                "Content-Type": "application/json"
             },
             body: JSON.stringify(rider)
         });
         const data = await response.json();
         if (response && response.status == 201) {
-            console.log('Rider Created', data);
             toastOK();
-        } else {
-            toastNOK();
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            Router.push('/login');
         }
     }
     return (
         <>
+            <Card>
+                <CardBody>
+                    <p>Rider Details</p>
+                </CardBody>
+            </Card>
+            <br />
             <div className={styles.testCRUD}>
                 <Input type="text" color="secondary" variant="bordered" label="First Name" isRequired onChange={(e) => setfName(e.target.value)} />
                 <Input type="text" color="secondary" variant="bordered" label="Last Name" isRequired onChange={(e) => setlName(e.target.value)} />
@@ -103,7 +100,9 @@ export default function RiderCRUD() {
             </div>
             <br />
             <ToastContainer />
-            <Button variant="ghost" color="secondary" onClick={handleClick}>Post Data</Button>
+            <Button variant="ghost" color="secondary" onClick={handleClick}>{TextProps}</Button>
         </>
     );
 }
+
+export default RiderCRUD;

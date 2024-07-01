@@ -34,7 +34,6 @@ export const AuthProvider: FunctionComponent<{ children: ReactNode }> = ({ child
 
     useEffect(() => {
         const cookies = getCookies();
-        // Assuming you have a cookie named 'authEmail' for the user's email
         if (cookies.authEmail) {
             setEmail(cookies.authEmail);
             setIsLogged(true);

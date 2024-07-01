@@ -2,9 +2,8 @@
 import styles from "./test.module.css";
 import React from "react";
 import { Select, SelectItem } from "@nextui-org/react";
-import RiderCRUD from "../components/riderCRUD/riderCRUD";
-import DriverCRUD from "../components/driverCRUD/driverCRUD";
-import BookingCRUD from "../components/bookingCRUD/bookingCRUD";
+
+import BookingCRUD from "../booking/bookingCRUD/bookingCRUD";
 import VehicleCRUD from "../components/vehicleCRUD/vehicleCRUD";
 import { Card, CardBody } from "@nextui-org/react";
 
@@ -12,8 +11,6 @@ export default function BackendTest() {
     const [crud, setCrud] = React.useState("");
 
     const crudList = [
-        { key: "driver", label: "Driver" },
-        { key: "rider", label: "Rider" },
         { key: "booking", label: "Booking" },
         { key: "vehicle", label: "Vehicle" }
     ];
@@ -22,10 +19,6 @@ export default function BackendTest() {
     }
     const switchCrud = () => {
         switch (crud) {
-            case "driver":
-                return <DriverCRUD />;
-            case "rider":
-                return <RiderCRUD />;
             case "booking":
                 return <BookingCRUD />;
             case "vehicle":

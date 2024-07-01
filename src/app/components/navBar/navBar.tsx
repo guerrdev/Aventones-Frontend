@@ -1,31 +1,62 @@
 'use client'
-import React, { useEffect, useState } from "react";
+import { useTheme } from "next-themes";
+import styles from "./navBar.module.css";
+import { useRouter } from 'next/navigation'
 import { useAuth } from "@/app/AuthContext";
-import { Navbar, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, NavbarBrand, NavbarContent, NavbarItem, Button, Link, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu, Avatar } from "@nextui-org/react";
+import React, { useEffect, useState } from "react";
+import { Navbar, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, NavbarBrand, NavbarContent, NavbarItem, Image, Button, Link, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu, Avatar } from "@nextui-org/react";
+import { Moon, Sun } from "react-feather";
 // import { ChevronDown, Lock, Activity, Flash, Server, TagUser, Scale } from "./Icons";
 
 export default function NavBar() {
+
+    const [mounted, setMounted] = useState(false)
+    const { theme, setTheme } = useTheme()
+    const Router = useRouter();
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
     const { isLogged, setIsLogged, email } = useAuth();
-    console.log('NavBar', 'isLogged:', isLogged, 'email:', email);
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+    if (!mounted) return null
+
+    //get the email from the cookie
+
     const clearCookies = () => {
         document.cookie = 'authEmail=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         document.cookie = 'isLogged=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     }
     return (
-        <Navbar onMenuOpenChange={setIsMenuOpen} position="sticky">
+        <Navbar onMenuOpenChange={setIsMenuOpen}>
             <NavbarContent>
                 <NavbarMenuToggle
                     aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                     className="sm:hidden"
                 />
                 <NavbarBrand>
-                    {/* <AcmeLogo /> */}
-                    <Link href="/" className="font-bold text-inherit">Aventones</Link>
+                    {theme === "dark" ? (<Image
+                        id={styles.Alogo}
+                        isBlurred
+                        src="/aventones-light.png"
+                        width={156}
+                        alt="Aventones' Inc Logo"
+                        className="m-5"
+                        disableSkeleton={true}
+                        onClick={() => { Router.push('/'); }}
+                    />) : (<Image
+                        id={styles.Alogo}
+                        isBlurred
+                        src="/aventones-dark.png"
+                        width={156}
+                        alt="Aventones' Inc Logo"
+                        className="m-5"
+                        disableSkeleton={true}
+                        onClick={() => { Router.push('/'); }}
+                    />)}
                 </NavbarBrand>
             </NavbarContent>
-
             <NavbarContent className="hidden sm:flex gap-4" justify="center">
                 <NavbarItem>
                     <Link color="foreground" href="/">
@@ -33,44 +64,50 @@ export default function NavBar() {
                     </Link>
                 </NavbarItem>
                 <NavbarItem>
-                    <Link color="foreground" href="aventones-test">
+                    <Link color="foreground" href="/register">
                         Aventones CRUDs
                     </Link>
                 </NavbarItem>
                 <NavbarItem>
-                    <Link color="foreground" href="settings">
-                        Integrations
+                    <Link color="foreground" href="/settings">
+                        Settings
                     </Link>
                 </NavbarItem>
             </NavbarContent>
-
             <NavbarContent as="div" justify="end">
                 <Dropdown placement="bottom-end">
                     <DropdownTrigger>
-                        {isLogged ? ( // If token exists, show the avatar with the user's email
+                        {isLogged ? (
                             <Avatar
                                 src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
                                 alt="Zoey"
                                 size="sm"
                             />
                         ) : (
-                            <NavbarItem>
-                                <Button as={Link} color="secondary" href="login" variant="ghost">
-                                    Log In
-                                </Button>
-                            </NavbarItem>
+                            <>
+                                <NavbarItem>
+                                    <Button as={Link} color="secondary" onPress={() => Router.push('/login')} variant="ghost">
+                                        Log In
+                                    </Button>
+                                </NavbarItem>
+                                <NavbarItem>
+                                    <Button as={Link} color="secondary" onPress={() => Router.push('/register')} variant="ghost">
+                                        Sign Up
+                                    </Button>
+                                </NavbarItem>
+                            </>
                         )}
                     </DropdownTrigger>
                     <DropdownMenu aria-label="Profile Actions" variant="flat">
-                        <DropdownItem key="profile" className="h-14 gap-2">
-                            <div className="font-semibold">Signed in as</div>
-                            <div className="font-semibold">{email}</div>
+                        <DropdownItem aria-label="Profile Actions" key="profile P" className="h-14 gap-2">
+                            <div aria-label="User Email" className="font-semibold">Signed in as</div>
+                            <div aria-label="User Email" className="font-semibold">{email}</div>
                         </DropdownItem>
-                        <DropdownItem key="aventones" href="aventones-test">AventonesCRUDs</DropdownItem>
-                        <DropdownItem key="profile" href="profile">My Profile</DropdownItem>
-                        <DropdownItem key="settings" href="settings">Settings</DropdownItem>
-                        <DropdownItem key="help_and_feedback" href="help">Help & Feedback</DropdownItem>
-                        <DropdownItem onPress={() => {
+                        <DropdownItem aria-label="placeholder" key="aventones" onPress={() => Router.push('/register')}>AventonesCRUDs</DropdownItem>
+                        <DropdownItem aria-label="User Profile" key="profile" onPress={() => Router.push('/profile')}>My Profile</DropdownItem>
+                        <DropdownItem aria-label="User Settings" key="settings" onPress={() => Router.push('/settings')}>Settings</DropdownItem>
+                        <DropdownItem aria-label="Help" key="help_and_feedback" onPress={() => Router.push('/help')}>Help & Feedback</DropdownItem>
+                        <DropdownItem aria-label="Log Out" onPress={() => {
                             clearCookies(); window.location.reload(); setIsLogged(false);
                         }}
                             key="logout" color="danger">
@@ -79,7 +116,25 @@ export default function NavBar() {
                     </DropdownMenu>
                 </Dropdown>
             </NavbarContent>
+            <>
+                {theme === "light" && (
+                    <Sun
+                        size={40}
+                        color="black"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => setTheme("dark")}
+                    />
+                )}
 
+                {theme === "dark" && (
+                    <Moon
+                        size={40}
+                        color="white"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => setTheme("light")}
+                    />
+                )}
+            </>
             <NavbarMenu>
                 {isLogged ? (
                     <React.Fragment>
@@ -87,17 +142,17 @@ export default function NavBar() {
                             <Link color="secondary" href="/">Home</Link>
                         </NavbarMenuItem>
                         <NavbarMenuItem>
-                            <Link color="foreground" href="aventones-test">AventonesCRUDs</Link>
+                            <Link color="foreground" href="/register">AventonesCRUDs</Link>
                         </NavbarMenuItem>
                         <NavbarMenuItem>
-                            <Link color="foreground" href="profile">My Profile</Link>
+                            <Link color="foreground" href="/profile">My Profile</Link>
                         </NavbarMenuItem>
                         <NavbarMenuItem>
-                            <Link color="foreground" href="settings">Settings</Link>
+                            <Link color="foreground" href="/settings">Settings</Link>
                         </NavbarMenuItem>
                         <NavbarMenuItem>
                             <Link onPress={() => {
-                                sessionStorage.removeItem('token'); window.location.reload(); setIsLogged(false);
+                                clearCookies(); window.location.reload(); setIsLogged(false);
                             }}
                                 key="logout" color="danger">
                                 Log Out</Link>

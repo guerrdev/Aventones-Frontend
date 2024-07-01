@@ -1,17 +1,21 @@
-
-import React, { SetStateAction } from "react";
-import { useState } from "react";
-import styles from "./driverCRUD.module.css";
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useRouter } from 'next/navigation'
+import styles from "./driverCRUD.module.css";
 import { ToastContainer } from 'react-toastify';
-import { today, getLocalTimeZone, DateValue, CalendarDate } from "@internationalized/date";
 import { useDateFormatter } from "@react-aria/i18n";
+import React, { SetStateAction, useState } from "react";
 import { EyeFilledIcon } from "../PasswordEye/EyeFilledIcon"
 import { EyeSlashFilledIcon } from "../PasswordEye/EyeSlashFilledIcon"
-import { Card, CardBody, DatePicker, Input,Button } from "@nextui-org/react";
+import { Card, CardBody, DatePicker, Input, Button } from "@nextui-org/react";
+import { today, getLocalTimeZone, DateValue, CalendarDate } from "@internationalized/date";
 
-export default function RiderCRUD() {
+interface DriverCRUDProps {
+    TextProps: string;
+}
+
+const RiderCRUD: React.FC<DriverCRUDProps> = ({ TextProps }) => {
+
+    const Router = useRouter()
     let formatter = useDateFormatter({ dateStyle: "short" });
     let defaultDate = today(getLocalTimeZone());
     const [isVisible, setIsVisible] = React.useState(false);
@@ -23,6 +27,7 @@ export default function RiderCRUD() {
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState<number>(0);
     const [password, setPassword] = useState("");
+    const [seats, setSeats] = useState<number>(0);
     const [model, setModel] = useState("");
     const [year, setYear] = useState("");
     const [plate, setPlate] = useState("");
@@ -41,21 +46,30 @@ export default function RiderCRUD() {
             plate: plate,
             year: year,
             make: make,
+            seats: seats,
             password: password
         }
-        postData(driver);
+        if (verifyFields()) {
+            postData(driver);
+        } else {
+            toast('Please fill all fields', {
+                hideProgressBar: true,
+                autoClose: 2000,
+                type: 'error',
+                theme: 'dark',
+                position: 'top-left'
+            });
+        }
+    }
+    const verifyFields = () => {
+        if (fName == "" || lName == "" || cedula == "" || dob == defaultDate || email == "" || phone == 0 || model == "" || plate == "" || year == "" || make == "" || seats == 0 || password == "") {
+            return false;
+        }
+        return true;
     }
 
-    const toastNOK = () =>
-        toast('Not Authorized, please log In', {
-            hideProgressBar: true,
-            autoClose: 2000,
-            type: 'error',
-            theme: 'dark',
-            position: 'top-left'
-        });
     const toastOK = () =>
-        toast('Rider Created!', {
+        toast('Thanks for registering, now you may log In!', {
             hideProgressBar: true,
             autoClose: 2000,
             type: 'success',
@@ -63,22 +77,19 @@ export default function RiderCRUD() {
             position: 'top-left'
         });
 
-    const postData = async (driver: { first_name: string; last_name: string; cedula: string; dob: string; email: string; phone: number; model: string; plate: string; year: string; make: string; password: string; }) => {
-        const token = sessionStorage.getItem('token');
-        const response = await fetch("http://127.0.0.1:3001/drivers", {
+    const postData = async (driver: { first_name: string; last_name: string; cedula: string; dob: string; email: string; phone: number; model: string; plate: string; year: string; make: string; password: string; seats: number; }) => {
+        const response = await fetch("http://127.0.0.1:3001/driver", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
+                "Content-Type": "application/json"
             },
             body: JSON.stringify(driver)
         });
         const data = await response.json();
         if (response && response.status == 201) {
-            console.log('Driver Created', data);
             toastOK();
-        } else {
-            toastNOK();
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            Router.push('/login');
         }
     }
     return (
@@ -89,7 +100,7 @@ export default function RiderCRUD() {
                 </CardBody>
             </Card>
             <br />
-            <div className={styles.testCRUD}>
+            <div className={styles.riderCRUD}>
                 <Input color="secondary" type="text" variant="bordered" label="First Name" isRequired onChange={(e) => setfName(e.target.value)} />
                 <Input color="secondary" type="text" variant="bordered" label="Last Name" isRequired onChange={(e) => setlName(e.target.value)} />
                 <Input color="secondary" type="text" variant="bordered" label="Cédula" isRequired onChange={(e) => setCedula(e.target.value)} />
@@ -97,21 +108,7 @@ export default function RiderCRUD() {
                 <Input color="secondary" type="email" variant="bordered" label="Email" isRequired onChange={(e) => setEmail(e.target.value)} />
                 <Input color="secondary" type="number" variant="bordered" label="Phone Number" isRequired onChange={(e) => setPhone(Number(e.target.value))} />
             </div>
-            <>
-                <Card>
-                    <CardBody>
-                        <p>Car Details</p>
-                    </CardBody>
-                </Card>
-                <br />
-            </>
-            <div className={styles.testCRUD}>
-                <Input color="secondary" type="text" variant="bordered" label="Make" isRequired onChange={(e) => setMake(e.target.value)} />
-                <Input color="secondary" type="text" variant="bordered" label="Model" isRequired onChange={(e) => setModel(e.target.value)} />
-                <Input color="secondary" type="number" variant="bordered" label="Year" isRequired onChange={(e) => setYear(e.target.value)} />
-                <Input color="secondary" type="text" variant="bordered" label="Plate" isRequired onChange={(e) => setPlate(e.target.value)} />
-            </div>
-            <div className={styles.testPassword}>
+            <div className={styles.riderPassword}>
                 <Input label="Password" variant="bordered" endContent={
                     <button id={styles.eyeButton} className="focus:outline-none" type="button" onClick={toggleVisibility}>
                         {isVisible ? (
@@ -128,9 +125,28 @@ export default function RiderCRUD() {
                     color="secondary"
                 />
             </div>
+            <>
+                <br />
+                <Card>
+                    <CardBody>
+                        <p>Car Details</p>
+                    </CardBody>
+                </Card>
+                <br />
+            </>
+            <div className={styles.riderCRUD}>
+                <Input color="secondary" type="text" variant="bordered" label="Make" isRequired onChange={(e) => setMake(e.target.value)} />
+                <Input color="secondary" type="text" variant="bordered" label="Model" isRequired onChange={(e) => setModel(e.target.value)} />
+                <Input color="secondary" type="number" variant="bordered" label="Year" isRequired onChange={(e) => setYear(e.target.value)} />
+                <Input color="secondary" type="text" variant="bordered" label="Plate" isRequired onChange={(e) => setPlate(e.target.value)} />
+            </div>
+            <div className={styles.riderPassword}>
+                <Input color="secondary" className="max-w-xs" type="text" variant="bordered" label="Seats" isRequired onChange={(e) => setSeats(Number(e.target.value))} />
+            </div>
             <br />
+            <Button variant="ghost" color="secondary" onClick={handleClick}>{TextProps}</Button>
             <ToastContainer />
-            <Button variant="ghost" color="secondary" onClick={handleClick}>Post Data</Button>
         </>
     );
 }
+export default RiderCRUD;

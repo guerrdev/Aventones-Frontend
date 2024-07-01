@@ -19,7 +19,6 @@ export default function BookingTable() {
     const router = useRouter();
     const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
         const cellValue = user[columnKey as keyof User];
-        console.log(cellValue);
 
         switch (columnKey) {
             case "driver":
@@ -54,17 +53,29 @@ export default function BookingTable() {
             case "actions":
                 return (
                     <div className="relative flex justify-center items-center gap-1">
-                        <Tooltip content="Details about this Aventon">
-                            <span onClick={() => router.push('/booking/details')} className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                        <Tooltip color="secondary" content="Details about this Aventon">
+                            <span onClick={() => router.push('/booking/details')} className="text-lg text-secondary cursor-pointer active:opacity-50">
                                 <EyeIcon />
+                            </span>
+                        </Tooltip>
+                        <Tooltip color="warning" content="Edit this Aventon">
+                            <span onClick={() => router.push('/booking/edit')} className="text-lg text-warning cursor-pointer active:opacity-50">
+                                <EditIcon />
+                            </span>
+                        </Tooltip>
+                        <Tooltip color="danger" content="Delete this Aventon">
+                            <span onClick={() => /*delete the aventon by ID*/ null } className="text-lg text-danger cursor-pointer active:opacity-50">
+                                <DeleteIcon />
                             </span>
                         </Tooltip>
                     </div>
                 );
             default:
+                // <span onClick={() => router.push('/booking/details')} className="text-lg text-default-400 cursor-pointer active:opacity-50">
+
                 return cellValue;
         }
-    }, []);
+    }, [router]);
 
     return (
         <Table aria-label="Example table with custom cells">
