@@ -64,9 +64,8 @@ export default function NavBar() {
                     </Link>
                 </NavbarItem>
                 <NavbarItem>
-                    <Link color="foreground" href="/register">
-                        Aventones CRUDs
-                    </Link>
+                    {isLogged ? (<Link color="foreground" href="/aventones">My Aventones</Link>) :
+                        <Link color="foreground" href="/reqbooking">Request an Aventon</Link>}
                 </NavbarItem>
                 <NavbarItem>
                     <Link color="foreground" href="/settings">
@@ -103,7 +102,7 @@ export default function NavBar() {
                             <div aria-label="User Email" className="font-semibold">Signed in as</div>
                             <div aria-label="User Email" className="font-semibold">{email}</div>
                         </DropdownItem>
-                        <DropdownItem aria-label="placeholder" key="aventones" onPress={() => Router.push('/register')}>AventonesCRUDs</DropdownItem>
+                        <DropdownItem aria-label="aventones" key="aventones" onPress={() => Router.push('/aventones')}>My Aventones</DropdownItem>
                         <DropdownItem aria-label="User Profile" key="profile" onPress={() => Router.push('/profile')}>My Profile</DropdownItem>
                         <DropdownItem aria-label="User Settings" key="settings" onPress={() => Router.push('/settings')}>Settings</DropdownItem>
                         <DropdownItem aria-label="Help" key="help_and_feedback" onPress={() => Router.push('/help')}>Help & Feedback</DropdownItem>
@@ -119,7 +118,6 @@ export default function NavBar() {
             <>
                 {theme === "light" && (
                     <Sun
-                        size={40}
                         color="black"
                         style={{ cursor: "pointer" }}
                         onClick={() => setTheme("dark")}
@@ -128,7 +126,6 @@ export default function NavBar() {
 
                 {theme === "dark" && (
                     <Moon
-                        size={40}
                         color="white"
                         style={{ cursor: "pointer" }}
                         onClick={() => setTheme("light")}
@@ -142,7 +139,8 @@ export default function NavBar() {
                             <Link color="secondary" href="/">Home</Link>
                         </NavbarMenuItem>
                         <NavbarMenuItem>
-                            <Link color="foreground" href="/register">AventonesCRUDs</Link>
+                            {isLogged ? (<Link color="foreground" href="/aventones">My Aventones</Link>) :
+                                <Link color="foreground" href="/reqbooking">Request an Aventon</Link>}
                         </NavbarMenuItem>
                         <NavbarMenuItem>
                             <Link color="foreground" href="/profile">My Profile</Link>

@@ -104,7 +104,6 @@ export default function LoginPage() {
                     color="secondary"
                 /> */}
                 <br />
-                <ToastContainer />
                 <Button size="lg" variant="ghost" color="secondary" onPress={handleClick}>Login</Button>
             </div>
             <ToastContainer />

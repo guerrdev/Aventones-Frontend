@@ -1,8 +1,13 @@
-#eyeButton {
-    align-self: center;
+.bookingMain {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6rem;
+    font-family: var(--monserrat);
 }
 
-.testCRUD {
+.bookingCRUD {
     font-family: inherit;
     display: grid;
     grid-template-columns: repeat(2, minmax(25%, 100%));

@@ -19,29 +19,28 @@ export default function RiderCRUD() {
         if (tokenRow) {
             return tokenRow.split('=')[1];
         }
-        return null; // or return a default value or handle the absence of the token as needed
+        return null;
     }
 
     const deleteAccount = async () => {
         const token = getToken();
-        const decodedToken: { email: string; role: string; } = jwtDecode(token as string);
-                console.log(decodedToken.email, decodedToken.role);
-        // const response = await fetch("http://127.0.0.1:3001/auth", {
-        //     method: "DELETE",
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //         'Authorization': `Bearer ${token}`
-        //     }
-        // });
-        // if (response && response.status == 204) {
-        //     setIsLogged(false);
-        //     setEmail("");
-        //     document.cookie = `isLogged=${false}; max-age=0; path=/`;
-        //     document.cookie = `token=; max-age=0; path=/`;
-        //     document.cookie = `authEmail=; max-age=0; path=/`;
-        //     await new Promise(resolve => setTimeout(resolve, 500));
-        //     window.location.reload();
-        // }
+        const decodedToken: { userId: string; role: string; } = jwtDecode(token as string);
+        const response = await fetch("http://127.0.0.1:3001/" + decodedToken.role + "?id=" + decodedToken.userId, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (response && response.status == 200) {
+            setIsLogged(false);
+            setEmail("");
+            document.cookie = `isLogged=${false}; max-age=0; path=/`;
+            document.cookie = `token=; max-age=0; path=/`;
+            document.cookie = `authEmail=; max-age=0; path=/`;
+            // await new Promise(resolve => setTimeout(resolve, 500));
+            // window.location.reload();
+        }
     }
 
     const toastOK = () =>

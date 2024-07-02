@@ -1,5 +1,6 @@
 'use client'
 import { toast } from 'react-toastify';
+import { useTheme } from "next-themes";
 import { jwtDecode } from "jwt-decode";
 import styles from "./login.module.css";
 import { useAuth } from "../AuthContext";
@@ -12,6 +13,8 @@ import { EyeSlashFilledIcon } from "../components/PasswordEye/EyeSlashFilledIcon
 
 export default function LoginPage() {
 
+    const [mounted, setMounted] = useState(false)
+    const { theme, setTheme } = useTheme()
     const [selected, setSelected] = React.useState("rider");
     const { isLogged, setIsLogged } = useAuth();
     const router = useRouter()
@@ -39,29 +42,29 @@ export default function LoginPage() {
         });
 
     const postSession = async (user: { email: string; password: string; type: string; }) => {
-        const response = await fetch("http://127.0.0.1:3001/auth", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(user)
-        });
-        console.log(response);
-        console.log(user);
-        if (response && response.status == 201) {
-            const data = await response.json();
-            const decodedToken: { email: string } = jwtDecode(data.token);
-            const userEmail = decodedToken.email;
-            setIsLogged(true);
-            document.cookie = `isLogged=${true}; max-age=86400; path=/`;
-            document.cookie = `token=${data.token}; max-age=86400; path=/`;
-            document.cookie = `authEmail=${userEmail}; max-age=86400; path=/`;
-            await new Promise(resolve => setTimeout(resolve, 500));
-            window.location.reload();
-        } else {
-            toastNOK();
-            await new Promise((resolve) => setTimeout(resolve, 1500));
-            // window.location.reload();
+        try {
+            const response = await fetch("http://127.0.0.1:3001/auth", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(user)
+            });
+            if (response && response.status == 201) {
+                const data = await response.json();
+                const decodedToken: { email: string } = jwtDecode(data.token);
+                const userEmail = decodedToken.email;
+                setIsLogged(true);
+                document.cookie = `isLogged=${true}; max-age=86400; path=/`;
+                document.cookie = `token=${data.token}; max-age=86400; path=/`;
+                document.cookie = `authEmail=${userEmail}; max-age=86400; path=/`;
+                await new Promise(resolve => setTimeout(resolve, 500));
+                window.location.reload();
+            } else {
+                toastNOK();
+            }
+        } catch (error) {
+            console.error("Error:", error);
         }
     }
     useEffect(() => {
@@ -70,21 +73,36 @@ export default function LoginPage() {
         }
     }, [isLogged, router]);
 
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+    if (!mounted) return null
+
     return (
         <>
             <div className={styles.loginMain}>
-                {selected === "rider" ? (<Image
+                {theme === "dark" ? (selected === "rider" ? (<Image
                     isBlurred
-                    width={64}
-                    src="/user-light64.png"
-                    alt="Aventones' Car Logo"
+                    src="/userlight.png"
+                    alt="User Icon"
+                    disableSkeleton={true}
                 />) : (<Image
                     isBlurred
-                    width={240}
-                    src="/logo-aventones-light240.png"
-                    alt="Aventones' Car Logo"
-                />)}
-                <h1 className={styles.h1Title}>Login In into Aventones</h1>
+                    src="/sedanlight.png"
+                    alt="Car Icon"
+                    disableSkeleton={true}
+                />)) : (selected === "rider" ? (<Image
+                    isBlurred
+                    src="/userdark.png"
+                    alt="User Icon"
+                    disableSkeleton={true}
+                />) : (<Image
+                    isBlurred
+                    src="/sedandark.png"
+                    alt="Car Icon"
+                    disableSkeleton={true}
+                />))}
+                <h1 className={styles.h1Title}>Log In into Aventones</h1>
                 <RadioGroup
                     label="Are you a Rider or a Driver?"
                     orientation="horizontal"
@@ -114,7 +132,6 @@ export default function LoginPage() {
                     color="secondary"
                 />
                 <br />
-                <ToastContainer />
                 <Button size="lg" variant="ghost" color="secondary" onPress={handleClick}>Login</Button>
             </div>
             <ToastContainer />

@@ -1,0 +1,7 @@
+.mainAventones {
+    flex-direction: column;
+    padding: 10rem;
+    align-items: center;
+    min-height: 100vh;
+    font-family: var(--monserrat);
+}

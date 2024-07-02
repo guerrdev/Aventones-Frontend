@@ -1,7 +1,10 @@
+'use client'
+
 import React from "react";
 import { Table, TableHeader, TableColumn, TableBody, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, TableRow, TableCell, User, Chip, Tooltip, ChipProps, getKeyValue } from "@nextui-org/react";
 import { EditIcon } from "./EditIcon";
 import { DeleteIcon } from "./DeleteIcon";
+import styles from "./aventones.module.css";
 import { VerticalDotsIcon } from "./VerticalDotsIcons";
 import { EyeIcon } from "./EyeIcon";
 import { columns, users } from "./data";
@@ -15,7 +18,7 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
 
 type User = typeof users[0];
 
-export default function BookingTable() {
+export default function Aventones() {
     const router = useRouter();
     const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
         const cellValue = user[columnKey as keyof User];
@@ -53,18 +56,13 @@ export default function BookingTable() {
             case "actions":
                 return (
                     <div className="relative flex justify-center items-center gap-1">
-                        <Tooltip color="secondary" content="Details about this Aventon">
-                            <span onClick={() => router.push('/booking/details')} className="text-lg text-secondary cursor-pointer active:opacity-50">
-                                <EyeIcon />
-                            </span>
-                        </Tooltip>
                         <Tooltip color="warning" content="Edit this Aventon">
                             <span onClick={() => router.push('/booking/edit')} className="text-lg text-warning cursor-pointer active:opacity-50">
                                 <EditIcon />
                             </span>
                         </Tooltip>
                         <Tooltip color="danger" content="Delete this Aventon">
-                            <span onClick={() => /*delete the aventon by ID*/ null } className="text-lg text-danger cursor-pointer active:opacity-50">
+                            <span onClick={() => /*delete the aventon by ID*/ null} className="text-lg text-danger cursor-pointer active:opacity-50">
                                 <DeleteIcon />
                             </span>
                         </Tooltip>
@@ -78,21 +76,25 @@ export default function BookingTable() {
     }, [router]);
 
     return (
-        <Table aria-label="Example table with custom cells">
-            <TableHeader columns={columns}>
-                {(column) => (
-                    <TableColumn key={column.uid} align={column.uid === "actions" ? "center" : "start"}>
-                        {column.name}
-                    </TableColumn>
-                )}
-            </TableHeader>
-            <TableBody items={users}>
-                {(item) => (
-                    <TableRow key={item.id}>
-                        {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-                    </TableRow>
-                )}
-            </TableBody>
-        </Table>
+        <div className={styles.mainAventones}>
+            <h1 className="text-2xl text-bold text-center">My Aventones</h1>
+            <br />
+            <Table aria-label="Example table with custom cells">
+                <TableHeader columns={columns}>
+                    {(column) => (
+                        <TableColumn key={column.uid} align={column.uid === "actions" ? "center" : "start"}>
+                            {column.name}
+                        </TableColumn>
+                    )}
+                </TableHeader>
+                <TableBody items={users}>
+                    {(item) => (
+                        <TableRow key={item.id}>
+                            {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+                        </TableRow>
+                    )}
+                </TableBody>
+            </Table>
+        </div>
     );
 }

@@ -1,6 +1,6 @@
 'use client'
 import styles from "./register.module.css";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Image, RadioGroup, Radio } from "@nextui-org/react";
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify';
@@ -9,8 +9,12 @@ import { jwtDecode } from "jwt-decode";
 import { ToastContainer } from 'react-toastify';
 import RiderCRUD from "../components/riderCRUD/riderCRUD";
 import DriverCRUD from "../components/driverCRUD/driverCRUD";
+import { useTheme } from "next-themes";
 
 export default function RegisterPage() {
+
+    const [mounted, setMounted] = useState(false)
+    const { theme, setTheme } = useTheme()
     const textD = "Register as Driver";
     const textR = "Register as Rider";
 
@@ -37,20 +41,35 @@ export default function RegisterPage() {
         }
     }, [isLogged, router]);
 
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+    if (!mounted) return null
+
     return (
         <>
             <div className={styles.registerMain}>
-                {selected === "rider" ? (<Image
+            {theme === "dark" ? (selected === "rider" ? (<Image
                     isBlurred
-                    src="/user-light64.png"
-                    alt="Aventones' Car Logo"
+                    src="/userlight.png"
+                    alt="User Icon"
                     disableSkeleton={true}
                 />) : (<Image
                     isBlurred
-                    src="/logo-aventones-light240.png"
-                    alt="Aventones' Car Logo"
+                    src="/sedanlight.png"
+                    alt="Car Icon"
                     disableSkeleton={true}
-                />)}
+                />)) : (selected === "rider" ? (<Image
+                    isBlurred
+                    src="/userdark.png"
+                    alt="User Icon"
+                    disableSkeleton={true}
+                />) : (<Image
+                    isBlurred
+                    src="/sedandark.png"
+                    alt="Car Icon"
+                    disableSkeleton={true}
+                />))}
                 <h1 className={styles.h1Title}>Sign Up into Aventones</h1>
                 <br />
                 <RadioGroup
