@@ -69,7 +69,7 @@ const RiderCRUD: React.FC<RiderCRUDProps> = ({ TextProps }) => {
         <>
             <Card>
                 <CardBody>
-                    <p>Rider Details</p>
+                    <p>Personal Details</p>
                 </CardBody>
             </Card>
             <br />

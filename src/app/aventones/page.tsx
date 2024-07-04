@@ -1,8 +1,8 @@
 'use client'
-
-import React from "react";
+import React, { useEffect } from "react";
 import { Table, TableHeader, TableColumn, TableBody, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, TableRow, TableCell, User, Chip, Tooltip, ChipProps, getKeyValue } from "@nextui-org/react";
 import { EditIcon } from "./EditIcon";
+import { useAuth } from "../AuthContext";
 import { DeleteIcon } from "./DeleteIcon";
 import styles from "./aventones.module.css";
 import { VerticalDotsIcon } from "./VerticalDotsIcons";
@@ -19,6 +19,7 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
 type User = typeof users[0];
 
 export default function Aventones() {
+    const { isLogged } = useAuth();
     const router = useRouter();
     const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
         const cellValue = user[columnKey as keyof User];
@@ -75,9 +76,22 @@ export default function Aventones() {
         }
     }, [router]);
 
+    useEffect(() => {
+        if (!isLogged) {
+            router.push('/');
+        }
+    }, []);
+
+
     return (
         <div className={styles.mainAventones}>
             <h1 className="text-2xl text-bold text-center">My Aventones</h1>
+            <br />
+            <div className="flex justify-end gap-2">
+                <Button color="secondary" variant="ghost" onClick={() => router.push('/booking')}>
+                    Book an Aventon
+                </Button>
+            </div>
             <br />
             <Table aria-label="Example table with custom cells">
                 <TableHeader columns={columns}>

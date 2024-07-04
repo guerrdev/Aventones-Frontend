@@ -1,4 +1,5 @@
 'use client'
+import { useAuth } from "../AuthContext";
 import React, { useEffect, useState } from "react";
 import styles from "./booking.module.css";
 import { useRouter } from 'next/navigation'
@@ -6,21 +7,21 @@ import { Time } from "@internationalized/date";
 import { ClockCircleLinearIcon } from './icons/ClockCircleLinearIcon';
 import { Card, CardBody, Input, Button, CheckboxGroup, Checkbox, TimeInput, Image, TimeInputValue } from "@nextui-org/react";
 import { useTheme } from "next-themes";
-import { useAuth } from "../AuthContext";
 import { jwtDecode } from "jwt-decode";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function BookingPage() {
 
     const router = useRouter()
     const [mounted, setMounted] = useState(false)
-    const { isLogged } = useAuth();
+    const { isLogged, setIsLogged, setEmail } = useAuth();
     const { theme } = useTheme()
     let [time, setTime] = React.useState<TimeInputValue>(new Time(7, 0));
     const [pickup, setPickup] = useState("");
     const [destination, setDestination] = useState("");
     const [days, setDays] = React.useState<string[]>([]);
     const [fee, setFee] = useState(Number);
+    const [seats, setSeats] = useState(Number);
 
     const getToken = () => {
         const tokenRow = document.cookie.split(';').find((row) => row.trim().startsWith('token='));
@@ -39,29 +40,33 @@ export default function BookingPage() {
             destination: destination,
             days: days,
             fee: fee,
-            time: time.toString()
+            time: time.toString(),
+            seatsAvailable: seats
         }
         if (verifyFields()) {
             postBooking(booking);
         } else {
-            toast('Please fill all fields', {
-                hideProgressBar: true,
-                autoClose: 2000,
-                type: 'error',
-                theme: 'dark',
-                position: 'top-left'
-            });
+            toastNOK();
         }
     }
 
     const verifyFields = () => {
-        if (pickup == "" || destination == "" || days || fee == 0 || time) {
+        if (pickup == "" || destination == "" || days.length == 0 || fee == 0) {
             return false;
         }
         return true;
     }
+    const toastNOK = () => {
+        toast('Please verify all fields', {
+            hideProgressBar: true,
+            autoClose: 2000,
+            type: 'error',
+            theme: 'dark',
+            position: 'top-left'
+        });
+    }
 
-    const toastOK = () =>
+    const toastOK = () => {
         toast('Thanks for booking an Aventon!', {
             hideProgressBar: true,
             autoClose: 2000,
@@ -69,7 +74,7 @@ export default function BookingPage() {
             theme: 'dark',
             position: 'top-left'
         });
-
+    }
     const postBooking = async (booking: { driver: string; pickup: string; destination: string; days: string[]; fee: Number; time: string; }) => {
         try {
             const response = await fetch("http://127.0.0.1:3001/booking", {
@@ -85,17 +90,19 @@ export default function BookingPage() {
                 await new Promise(resolve => setTimeout(resolve, 1500));
                 router.push('/');
             }
+            else {
+                toastNOK();
+            }
         } catch (error) {
             console.error('An unexpected error happened:', error);
         }
     }
 
-
     useEffect(() => {
         if (!isLogged) {
-            router.push('/login');
+            router.push('/');
         }
-    }, [isLogged, router]);
+    }, []);
 
     useEffect(() => {
         setMounted(true)
@@ -135,6 +142,12 @@ export default function BookingPage() {
                 )} />
             </div>
             <>
+                <Input className="max-w-xs" color="secondary" type="Number" variant="bordered" label="Available Seats" isRequired startContent={
+                    <div className="pointer-events-none flex items-center">
+                        <span className="text-default-400 text-small">#</span>
+                    </div>
+                } onChange={(e) => setSeats(Number(e.target.value))} /></>
+            <>
                 <br />
                 <CheckboxGroup
                     isRequired
@@ -155,6 +168,7 @@ export default function BookingPage() {
                 <br />
             </>
             <Button variant="ghost" color="secondary" onClick={handleClick}>Create an Aventon</Button>
+            <ToastContainer />
         </div>
     );
 }

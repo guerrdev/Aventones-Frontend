@@ -96,7 +96,7 @@ const RiderCRUD: React.FC<DriverCRUDProps> = ({ TextProps }) => {
         <>
             <Card>
                 <CardBody>
-                    <p>Driver Details</p>
+                    <p>Personal Details</p>
                 </CardBody>
             </Card>
             <br />

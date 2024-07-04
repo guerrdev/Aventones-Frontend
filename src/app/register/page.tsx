@@ -1,15 +1,13 @@
 'use client'
-import styles from "./register.module.css";
-import React, { useEffect, useState } from "react";
-import { Image, RadioGroup, Radio } from "@nextui-org/react";
-import { useRouter } from 'next/navigation'
-import { toast } from 'react-toastify';
+import { useTheme } from "next-themes";
 import { useAuth } from "../AuthContext";
-import { jwtDecode } from "jwt-decode";
+import styles from "./register.module.css";
+import { useRouter } from 'next/navigation';
 import { ToastContainer } from 'react-toastify';
+import React, { useEffect, useState } from "react";
 import RiderCRUD from "../components/riderCRUD/riderCRUD";
 import DriverCRUD from "../components/driverCRUD/driverCRUD";
-import { useTheme } from "next-themes";
+import { Image, RadioGroup, Radio } from "@nextui-org/react";
 
 export default function RegisterPage() {
 

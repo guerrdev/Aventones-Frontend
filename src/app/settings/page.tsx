@@ -1,12 +1,12 @@
 'use client'
+import { jwtDecode } from 'jwt-decode';
 import { toast } from 'react-toastify';
 import { useAuth } from "../AuthContext";
 import React, { useEffect } from "react";
 import styles from "./settings.module.css";
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
 import { ToastContainer } from 'react-toastify';
 import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from "@nextui-org/react";
-import { jwtDecode } from 'jwt-decode';
 
 export default function RiderCRUD() {
 
@@ -62,10 +62,10 @@ export default function RiderCRUD() {
         });
 
     useEffect(() => {
-        if (!isLogged && router) {
-            router.push('/login');
+        if (!isLogged) {
+            router.push('/');
         }
-    }, [isLogged, router]);
+    }, []);
 
     return (
         <>
