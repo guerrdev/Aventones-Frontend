@@ -1,0 +1,19 @@
+.profileContainer {
+    padding: 20px;
+    max-width: 600px;
+    margin: auto;
+}
+
+.profileInfo {
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.profileInfo p {
+    margin: 10px 0;
+}
+
+.profileInfo strong {
+    color: #333;
+}
