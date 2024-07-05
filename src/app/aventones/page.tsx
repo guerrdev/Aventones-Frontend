@@ -19,7 +19,7 @@ const statusColorMap: Record<string, ChipProps["color"]> = {
 type User = typeof users[0];
 
 export default function Aventones() {
-    const { isLogged } = useAuth();
+    const { tokenExists } = useAuth();
     const router = useRouter();
     const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
         const cellValue = user[columnKey as keyof User];
@@ -77,7 +77,7 @@ export default function Aventones() {
     }, [router]);
 
     useEffect(() => {
-        if (!isLogged) {
+        if (!tokenExists) {
             router.push('/');
         }
     }, []);

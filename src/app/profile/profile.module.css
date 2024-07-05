@@ -1,19 +1,18 @@
-.profileContainer {
-    padding: 20px;
-    max-width: 600px;
+.spinnerContainer {
     margin: auto;
+    text-align: center;
 }
 
-.profileInfo {
-    background-color: #f4f4f4;
-    padding: 20px;
-    border-radius: 8px;
+.main {
+    flex-direction: column;
+    padding: 10rem;
+    align-self: center;
+    align-items: center;
+    font-family: var(--monserrat);
+    display: flex;
 }
-
-.profileInfo p {
-    margin: 10px 0;
-}
-
-.profileInfo strong {
-    color: #333;
+.test{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
 }

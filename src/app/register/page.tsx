@@ -17,7 +17,7 @@ export default function RegisterPage() {
     const textR = "Register as Rider";
 
     const [selected, setSelected] = React.useState("rider");
-    const { isLogged, setIsLogged } = useAuth();
+    const { tokenExists } = useAuth();
     const router = useRouter()
 
     const switchCrud = () => {
@@ -34,10 +34,10 @@ export default function RegisterPage() {
     }
 
     useEffect(() => {
-        if (isLogged) {
+        if (tokenExists) {
             router.push('/');
         }
-    }, [isLogged, router]);
+    }, [tokenExists, router]);
 
     useEffect(() => {
         setMounted(true)

@@ -1,5 +1,4 @@
 'use client'
-import { jwtDecode } from 'jwt-decode';
 import { toast } from 'react-toastify';
 import { useAuth } from "../AuthContext";
 import React, { useEffect } from "react";
@@ -11,7 +10,7 @@ import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDi
 export default function RiderCRUD() {
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
-    const { isLogged, setIsLogged, setEmail } = useAuth();
+    const { tokenExists, setokenExists } = useAuth();
     const router = useRouter();
 
     const getToken = () => {
@@ -24,8 +23,7 @@ export default function RiderCRUD() {
 
     const deleteAccount = async () => {
         const token = getToken();
-        const decodedToken: { userId: string; role: string; } = jwtDecode(token as string);
-        const response = await fetch("http://127.0.0.1:3001/" + decodedToken.role + "?id=" + decodedToken.userId, {
+        const response = await fetch("http://127.0.0.1:3001/user", {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -33,36 +31,15 @@ export default function RiderCRUD() {
             }
         });
         if (response && response.status == 200) {
-            setIsLogged(false);
-            setEmail("");
-            document.cookie = `isLogged=${false}; max-age=0; path=/`;
+            setokenExists(false);
             document.cookie = `token=; max-age=0; path=/`;
-            document.cookie = `authEmail=; max-age=0; path=/`;
-            // await new Promise(resolve => setTimeout(resolve, 500));
-            // window.location.reload();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            window.location.reload();
         }
     }
 
-    const toastOK = () =>
-        toast('You are already logged In', {
-            hideProgressBar: true,
-            autoClose: 2000,
-            type: 'info',
-            theme: 'dark',
-            position: 'top-left'
-        });
-
-    const toastNOK = () =>
-        toast('Check Login and Password', {
-            hideProgressBar: true,
-            autoClose: 2000,
-            type: 'error',
-            theme: 'dark',
-            position: 'top-left',
-        });
-
     useEffect(() => {
-        if (!isLogged) {
+        if (!tokenExists) {
             router.push('/');
         }
     }, []);

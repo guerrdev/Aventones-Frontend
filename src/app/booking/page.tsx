@@ -14,7 +14,7 @@ export default function BookingPage() {
 
     const router = useRouter()
     const [mounted, setMounted] = useState(false)
-    const { isLogged, setIsLogged, setEmail } = useAuth();
+    const { tokenExists, email } = useAuth();
     const { theme } = useTheme()
     let [time, setTime] = React.useState<TimeInputValue>(new Time(7, 0));
     const [pickup, setPickup] = useState("");
@@ -99,7 +99,7 @@ export default function BookingPage() {
     }
 
     useEffect(() => {
-        if (!isLogged) {
+        if (!tokenExists) {
             router.push('/');
         }
     }, []);

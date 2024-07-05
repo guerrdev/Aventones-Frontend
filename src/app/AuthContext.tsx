@@ -1,12 +1,10 @@
 'use client'
-import { set } from 'lodash';
 import React, { createContext, useState, useContext, ReactNode, FunctionComponent, useEffect } from 'react';
 
 interface AuthContextType {
-    isLogged: boolean;
+    tokenExists: boolean;
     email: string;
-    setIsLogged: (isLogged: boolean) => void;
-    setEmail: (email: string) => void;
+    setokenExists: (tokenExists: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,24 +26,51 @@ const getCookies = (): { [key: string]: string } => {
     }, {} as { [key: string]: string });
 };
 
+const getEmail = async (token: any) => {
+    const response = await fetch("http://127.0.0.1:3001/user", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+    });
+    if (response.ok) {
+        const data = await response.json();
+        return data.email;
+    }
+}
+
+const verifyToken = async (token: any) => {
+    const response = await fetch("http://127.0.0.1:3001/verifyauth", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+    });
+    if (response.ok) {
+        return true;
+    }
+}
+
 export const AuthProvider: FunctionComponent<{ children: ReactNode }> = ({ children }) => {
-    const [isLogged, setIsLogged] = useState<boolean>(false);
+    const [tokenExists, setokenExists] = useState<boolean>(false);
     const [email, setEmail] = useState<string>('');
 
     useEffect(() => {
         const cookies = getCookies();
-        if (cookies.authEmail) {
-            setEmail(cookies.authEmail);
-            setIsLogged(true);
-        }
-        else {
-            setIsLogged(false);
-            setEmail('');
-        }
+        verifyToken(cookies.token).then((res) => {
+            if (res) {
+                setokenExists(true);
+                getEmail(cookies.token).then((email) => {
+                    setEmail(email);
+                });
+            }
+        });
     }, []);
 
     return (
-        <AuthContext.Provider value={{ isLogged, email, setIsLogged, setEmail }}>
+        <AuthContext.Provider value={{ tokenExists, setokenExists, email }}>
             {children}
         </AuthContext.Provider>
     );

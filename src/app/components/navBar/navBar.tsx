@@ -10,24 +10,33 @@ import { Moon, Sun } from "react-feather";
 
 export default function NavBar() {
 
+    const [userPicture, setUserPicture] = useState("");
     const [mounted, setMounted] = useState(false)
     const { theme, setTheme } = useTheme()
     const Router = useRouter();
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-    const { isLogged, setIsLogged, email } = useAuth();
+    const { tokenExists, setokenExists, email } = useAuth();
+
+    const userLogout = () => {
+        document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        localStorage.removeItem('profilePic');
+    }
+
+    useEffect(() => {
+        let profilePic = "/userdark.png";
+        const LSPP = localStorage.getItem('profilePic');
+        if (LSPP == null || LSPP == "" || LSPP == "null" || LSPP == "undefined") {
+            setUserPicture(profilePic);
+        } else {
+            setUserPicture(LSPP);
+        }
+    }, [tokenExists]);
 
     useEffect(() => {
         setMounted(true)
     }, [])
     if (!mounted) return null
 
-    //get the email from the cookie
-
-    const clearCookies = () => {
-        document.cookie = 'authEmail=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        document.cookie = 'isLogged=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    }
     return (
         <Navbar onMenuOpenChange={setIsMenuOpen}>
             <NavbarContent>
@@ -64,7 +73,7 @@ export default function NavBar() {
                     </Link>
                 </NavbarItem>
                 <NavbarItem>
-                    {isLogged ? (<Link color="foreground" href="/aventones">My Aventones</Link>) :
+                    {tokenExists ? (<Link color="foreground" href="/aventones">My Aventones</Link>) :
                         <Link color="foreground" href="/reqbooking">Request an Aventon</Link>}
                 </NavbarItem>
                 <NavbarItem>
@@ -76,9 +85,9 @@ export default function NavBar() {
             <NavbarContent as="div" justify="end">
                 <Dropdown placement="bottom-end">
                     <DropdownTrigger>
-                        {isLogged ? (
+                        {tokenExists ? (
                             <Avatar
-                                src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+                                src={userPicture}
                                 alt="Zoey"
                                 size="sm"
                             />
@@ -107,7 +116,7 @@ export default function NavBar() {
                         <DropdownItem aria-label="User Settings" key="settings" onPress={() => Router.push('/settings')}>Settings</DropdownItem>
                         <DropdownItem aria-label="Help" key="help_and_feedback" onPress={() => Router.push('/help')}>Help & Feedback</DropdownItem>
                         <DropdownItem aria-label="Log Out" onPress={() => {
-                            clearCookies(); window.location.reload(); setIsLogged(false);
+                            userLogout(); window.location.reload(); setokenExists(false);
                         }}
                             key="logout" color="danger">
                             Log Out
@@ -133,13 +142,13 @@ export default function NavBar() {
                 )}
             </>
             <NavbarMenu>
-                {isLogged ? (
+                {tokenExists ? (
                     <React.Fragment>
                         <NavbarMenuItem>
                             <Link color="secondary" href="/">Home</Link>
                         </NavbarMenuItem>
                         <NavbarMenuItem>
-                            {isLogged ? (<Link color="foreground" href="/aventones">My Aventones</Link>) :
+                            {tokenExists ? (<Link color="foreground" href="/aventones">My Aventones</Link>) :
                                 <Link color="foreground" href="/reqbooking">Request an Aventon</Link>}
                         </NavbarMenuItem>
                         <NavbarMenuItem>
@@ -150,7 +159,7 @@ export default function NavBar() {
                         </NavbarMenuItem>
                         <NavbarMenuItem>
                             <Link onPress={() => {
-                                clearCookies(); window.location.reload(); setIsLogged(false);
+                                userLogout(); window.location.reload(); setokenExists(false);
                             }}
                                 key="logout" color="danger">
                                 Log Out</Link>

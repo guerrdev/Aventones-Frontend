@@ -16,7 +16,7 @@ export default function LoginPage() {
     const [mounted, setMounted] = useState(false)
     const { theme, setTheme } = useTheme()
     const [selected, setSelected] = React.useState("rider");
-    const { isLogged, setIsLogged } = useAuth();
+    const { tokenExists, setokenExists } = useAuth();
     const router = useRouter()
     const [isVisible, setIsVisible] = React.useState(false);
     const toggleVisibility = () => setIsVisible(!isVisible);
@@ -52,13 +52,10 @@ export default function LoginPage() {
             });
             if (response && response.status == 201) {
                 const data = await response.json();
-                const decodedToken: { email: string } = jwtDecode(data.token);
-                const userEmail = decodedToken.email;
-                setIsLogged(true);
-                document.cookie = `isLogged=${true}; max-age=86400; path=/`;
+                setokenExists(true);
                 document.cookie = `token=${data.token}; max-age=86400; path=/`;
-                document.cookie = `authEmail=${userEmail}; max-age=86400; path=/`;
-                await new Promise(resolve => setTimeout(resolve, 500));
+                getUser(data.token);
+                await new Promise(resolve => setTimeout(resolve, 1000));
                 window.location.reload();
             } else {
                 toastNOK();
@@ -67,11 +64,24 @@ export default function LoginPage() {
             console.error("Error:", error);
         }
     }
+
+    const getUser = async (token: any) => {
+        const response = await fetch('http://127.0.0.1:3001/user', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+        localStorage.setItem('profilePic', data.profilePicture);
+    }
+
     useEffect(() => {
-        if (isLogged) {
+        if (tokenExists) {
             router.push('/');
         }
-    }, [isLogged, router]);
+    }, [tokenExists, router]);
 
     useEffect(() => {
         setMounted(true)

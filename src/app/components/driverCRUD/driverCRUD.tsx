@@ -61,6 +61,7 @@ const RiderCRUD: React.FC<DriverCRUDProps> = ({ TextProps }) => {
             });
         }
     }
+
     const verifyFields = () => {
         if (fName == "" || lName == "" || cedula == "" || dob == defaultDate || email == "" || phone == 0 || model == "" || plate == "" || year == "" || make == "" || seats == 0 || password == "") {
             return false;

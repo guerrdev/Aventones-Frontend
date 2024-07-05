@@ -73,7 +73,7 @@ const RiderCRUD: React.FC<RiderCRUDProps> = ({ TextProps }) => {
                 </CardBody>
             </Card>
             <br />
-            <div className={styles.testCRUD}>
+            <div className={styles.registerCRUD}>
                 <Input type="text" color="secondary" variant="bordered" label="First Name" isRequired onChange={(e) => setfName(e.target.value)} />
                 <Input type="text" color="secondary" variant="bordered" label="Last Name" isRequired onChange={(e) => setlName(e.target.value)} />
                 <Input type="text" color="secondary" variant="bordered" label="Cédula" isRequired onChange={(e) => setCedula(e.target.value)} />
@@ -81,7 +81,7 @@ const RiderCRUD: React.FC<RiderCRUDProps> = ({ TextProps }) => {
                 <Input color="secondary" type="email" variant="bordered" label="Email" isRequired onChange={(e) => setEmail(e.target.value)} />
                 <Input color="secondary" type="number" variant="bordered" label="Phone Number" isRequired onChange={(e) => setPhone(Number(e.target.value))} />
             </div>
-            <div className={styles.testPassword}>
+            <div className={styles.registerPassword}>
                 <Input label="Password" variant="bordered" endContent={
                     <button id={styles.eyeButton} className="focus:outline-none" type="button" onClick={toggleVisibility}>
                         {isVisible ? (
