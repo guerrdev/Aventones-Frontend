@@ -10,17 +10,17 @@ const ProfilePage: React.FC = () => {
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [isReadOnly, setisReadOnly] = React.useState(true);
+    const [phone, setPhone] = useState(Number);
+    const [seats, setSeats] = useState(Number);
+    const [year, setYear] = useState(Number);
+    const [profilePic, setprofilePic] = useState('');
     const [fname, setFname] = useState('');
     const [lname, setLname] = useState('');
     const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState(Number);
     const [model, setModel] = useState('');
     const [plate, setPlate] = useState('');
-    const [seats, setSeats] = useState(Number);
     const [make, setMake] = useState('');
-    const [year, setYear] = useState(Number);
     const [role, setRole] = useState('');
-    const [profilePic, setprofilePic] = useState('');
     const { tokenExists } = useAuth();
     const router = useRouter();
 
@@ -226,15 +226,15 @@ const ProfilePage: React.FC = () => {
                 </CardBody>
                 <Divider />
                 <CardFooter>
-                    <div className={styles.test}>
+                    <div className={styles.editCheckbox}>
                         <div className="flex gap-1">
                             <Checkbox isSelected={!isReadOnly} color="warning" onValueChange={() => setisReadOnly(!isReadOnly)}>
                                 Allow Editing
                             </Checkbox>
                         </div>
                         <div className="flex gap-1">
-                            <Button variant="ghost" color="danger" onPress={() => router.push('/')}>Cancel</Button>
-                            <Button variant="ghost" color="secondary" onPress={onOpen}>Save</Button>
+                            <Button variant="ghost" isDisabled={isReadOnly} color="danger" onPress={() => router.push('/')}>Cancel</Button>
+                            <Button variant="ghost" isDisabled={isReadOnly} color="secondary" onPress={onOpen}>Save</Button>
                         </div>
                     </div>
                 </CardFooter>

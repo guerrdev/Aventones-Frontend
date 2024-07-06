@@ -4,8 +4,8 @@ import { useRouter } from 'next/navigation'
 import styles from "./riderCRUD.module.css";
 import { ToastContainer } from 'react-toastify';
 import { useDateFormatter } from "@react-aria/i18n";
-import { EyeFilledIcon } from "../PasswordEye/EyeFilledIcon"
-import { EyeSlashFilledIcon } from "../PasswordEye/EyeSlashFilledIcon"
+import { EyeFilledIcon } from "../icons/EyeFilledIcon"
+import { EyeSlashFilledIcon } from "../icons/EyeSlashFilledIcon"
 import { Card, CardBody, Button, Input, DatePicker } from "@nextui-org/react";
 import { today, getLocalTimeZone, CalendarDate } from "@internationalized/date";
 

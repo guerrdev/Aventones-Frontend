@@ -4,8 +4,8 @@ import styles from "./driverCRUD.module.css";
 import { ToastContainer } from 'react-toastify';
 import { useDateFormatter } from "@react-aria/i18n";
 import React, { SetStateAction, useState } from "react";
-import { EyeFilledIcon } from "../PasswordEye/EyeFilledIcon"
-import { EyeSlashFilledIcon } from "../PasswordEye/EyeSlashFilledIcon"
+import { EyeFilledIcon } from "../icons/EyeFilledIcon"
+import { EyeSlashFilledIcon } from "../icons/EyeSlashFilledIcon"
 import { Card, CardBody, DatePicker, Input, Button } from "@nextui-org/react";
 import { today, getLocalTimeZone, DateValue, CalendarDate } from "@internationalized/date";
 

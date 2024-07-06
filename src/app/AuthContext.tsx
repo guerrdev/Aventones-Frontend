@@ -4,6 +4,7 @@ import React, { createContext, useState, useContext, ReactNode, FunctionComponen
 interface AuthContextType {
     tokenExists: boolean;
     email: string;
+    role: string;
     setokenExists: (tokenExists: boolean) => void;
 }
 
@@ -26,7 +27,7 @@ const getCookies = (): { [key: string]: string } => {
     }, {} as { [key: string]: string });
 };
 
-const getEmail = async (token: any) => {
+const getUserData = async (token: any) => {
     const response = await fetch("http://127.0.0.1:3001/user", {
         method: "GET",
         headers: {
@@ -36,7 +37,7 @@ const getEmail = async (token: any) => {
     });
     if (response.ok) {
         const data = await response.json();
-        return data.email;
+        return data;
     }
 }
 
@@ -56,21 +57,23 @@ const verifyToken = async (token: any) => {
 export const AuthProvider: FunctionComponent<{ children: ReactNode }> = ({ children }) => {
     const [tokenExists, setokenExists] = useState<boolean>(false);
     const [email, setEmail] = useState<string>('');
+    const [role, setRole] = useState<string>('');
 
     useEffect(() => {
         const cookies = getCookies();
         verifyToken(cookies.token).then((res) => {
             if (res) {
                 setokenExists(true);
-                getEmail(cookies.token).then((email) => {
-                    setEmail(email);
+                getUserData(cookies.token).then((user) => {
+                    setEmail(user.email);
+                    setRole(user.role);
                 });
             }
         });
     }, []);
 
     return (
-        <AuthContext.Provider value={{ tokenExists, setokenExists, email }}>
+        <AuthContext.Provider value={{ tokenExists, setokenExists, email, role }}>
             {children}
         </AuthContext.Provider>
     );

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import styles from "./booking.module.css";
 import { useRouter } from 'next/navigation'
 import { Time } from "@internationalized/date";
-import { ClockCircleLinearIcon } from './icons/ClockCircleLinearIcon';
+import { ClockCircleLinearIcon } from '../components/icons/ClockCircleLinearIcon';
 import { Card, CardBody, Input, Button, CheckboxGroup, Checkbox, TimeInput, Image, TimeInputValue } from "@nextui-org/react";
 import { useTheme } from "next-themes";
 import { jwtDecode } from "jwt-decode";
@@ -16,7 +16,7 @@ export default function BookingPage() {
     const [mounted, setMounted] = useState(false)
     const { tokenExists, email } = useAuth();
     const { theme } = useTheme()
-    let [time, setTime] = React.useState<TimeInputValue>(new Time(7, 0));
+    const [time, setTime] = React.useState<TimeInputValue>(new Time(7, 0));
     const [pickup, setPickup] = useState("");
     const [destination, setDestination] = useState("");
     const [days, setDays] = React.useState<string[]>([]);
@@ -88,7 +88,7 @@ export default function BookingPage() {
             if (response && response.status == 201) {
                 toastOK();
                 await new Promise(resolve => setTimeout(resolve, 1500));
-                router.push('/');
+                window.location.reload();
             }
             else {
                 toastNOK();
@@ -157,13 +157,13 @@ export default function BookingPage() {
                     color="secondary"
                     onValueChange={setDays}
                 >
-                    <Checkbox value="monday">Monday</Checkbox>
-                    <Checkbox value="tuesday">Tuesday</Checkbox>
-                    <Checkbox value="wednesday">Wednesday</Checkbox>
-                    <Checkbox value="thursday">Thursday</Checkbox>
-                    <Checkbox value="friday">Friday</Checkbox>
-                    <Checkbox value="saturday">Saturday</Checkbox>
-                    <Checkbox value="sunday">Sunday</Checkbox>
+                    <Checkbox value="Monday">Monday</Checkbox>
+                    <Checkbox value="Tuesday">Tuesday</Checkbox>
+                    <Checkbox value="Wednesday">Wednesday</Checkbox>
+                    <Checkbox value="Thursday">Thursday</Checkbox>
+                    <Checkbox value="Friday">Friday</Checkbox>
+                    <Checkbox value="Saturday">Saturday</Checkbox>
+                    <Checkbox value="Sunday">Sunday</Checkbox>
                 </CheckboxGroup>
                 <br />
             </>

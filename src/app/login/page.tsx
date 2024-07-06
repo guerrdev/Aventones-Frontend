@@ -7,9 +7,9 @@ import { useAuth } from "../AuthContext";
 import { useRouter } from 'next/navigation'
 import { ToastContainer } from 'react-toastify';
 import React, { useEffect, useState } from "react";
-import { EyeFilledIcon } from "../components/PasswordEye/EyeFilledIcon"
+import { EyeFilledIcon } from "../components/icons/EyeFilledIcon"
 import { Button, Input, Image, RadioGroup, Radio } from "@nextui-org/react";
-import { EyeSlashFilledIcon } from "../components/PasswordEye/EyeSlashFilledIcon"
+import { EyeSlashFilledIcon } from "../components/icons/EyeSlashFilledIcon"
 
 export default function LoginPage() {
 

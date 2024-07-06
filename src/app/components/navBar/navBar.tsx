@@ -15,7 +15,7 @@ export default function NavBar() {
     const { theme, setTheme } = useTheme()
     const Router = useRouter();
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-    const { tokenExists, setokenExists, email } = useAuth();
+    const { tokenExists, setokenExists, email, role } = useAuth();
 
     const userLogout = () => {
         document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
@@ -73,7 +73,7 @@ export default function NavBar() {
                     </Link>
                 </NavbarItem>
                 <NavbarItem>
-                    {tokenExists ? (<Link color="foreground" href="/aventones">My Aventones</Link>) :
+                    {tokenExists && role === 'Driver' ? (<Link color="foreground" href="/aventones">My Aventones</Link>) :
                         <Link color="foreground" href="/reqbooking">Request an Aventon</Link>}
                 </NavbarItem>
                 <NavbarItem>
@@ -148,7 +148,7 @@ export default function NavBar() {
                             <Link color="secondary" href="/">Home</Link>
                         </NavbarMenuItem>
                         <NavbarMenuItem>
-                            {tokenExists ? (<Link color="foreground" href="/aventones">My Aventones</Link>) :
+                            {tokenExists && role === 'Driver' ? (<Link color="foreground" href="/aventones">My Aventones</Link>) :
                                 <Link color="foreground" href="/reqbooking">Request an Aventon</Link>}
                         </NavbarMenuItem>
                         <NavbarMenuItem>

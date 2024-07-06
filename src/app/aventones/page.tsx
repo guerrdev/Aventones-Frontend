@@ -1,45 +1,98 @@
 'use client'
-import React, { useEffect } from "react";
-import { Table, TableHeader, TableColumn, TableBody, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, TableRow, TableCell, User, Chip, Tooltip, ChipProps, getKeyValue } from "@nextui-org/react";
-import { EditIcon } from "./EditIcon";
 import { useAuth } from "../AuthContext";
-import { DeleteIcon } from "./DeleteIcon";
+import { useRouter } from 'next/navigation';
 import styles from "./aventones.module.css";
-import { VerticalDotsIcon } from "./VerticalDotsIcons";
-import { EyeIcon } from "./EyeIcon";
-import { columns, users } from "./data";
-import { useRouter } from 'next/navigation'
+import React, { useEffect } from "react";
+import { EyeIcon } from "../components/icons/EyeIcon";
+import { EditIcon } from "../components/icons/EditIcon";
+import { DeleteIcon } from "../components/icons/DeleteIcon";
+import fetchAventones from "./aventonesFetch";
+import { Table, TableHeader, TableColumn, TableBody, Modal, ModalFooter, ModalContent, ModalBody, ModalHeader, Button, TableRow, TableCell, Tooltip, User, Spinner, useDisclosure } from "@nextui-org/react";
+import { toast, ToastContainer } from "react-toastify";
 
-const statusColorMap: Record<string, ChipProps["color"]> = {
-    active: "success",
-    paused: "danger",
-    vacation: "warning",
-};
+interface Booking {
+    id: string;
+    driver: string;
+    from: string;
+    to: string;
+    seats: number;
+    fee: string;
+    avatar: string;
+    car: string;
+}
+let bookings: Booking[] = []
 
-type User = typeof users[0];
+if (typeof window !== 'undefined') {
+    fetchAventones().then((result) => {
+        bookings = result;
+    });
+}
 
 export default function Aventones() {
+    const delID = React.useRef("");
+
     const { tokenExists } = useAuth();
     const router = useRouter();
-    const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
-        const cellValue = user[columnKey as keyof User];
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
+    const columns = [
+        { name: "DRIVER", uid: "driver" },
+        { name: "TRAVEL", uid: "from" },
+        { name: "SEATS", uid: "seats" },
+        { name: "FEE", uid: "fee" },
+        { name: "ACTIONS", uid: "actions" },
+    ];
+
+    const getToken = () => {
+        const tokenRow = document.cookie.split(';').find((row) => row.trim().startsWith('token='));
+        if (tokenRow) {
+            return tokenRow.split('=')[1];
+        }
+        return null;
+    }
+
+    const handleDelete = async (id: string) => {
+        const token = getToken();
+        const response = await fetch(`http://127.0.0.1:3001/booking/?id=${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (response.ok) {
+            toast('Aventon succesfully deleted!', {
+                hideProgressBar: true,
+                autoClose: 2000,
+                type: 'success',
+                theme: 'dark',
+                position: 'top-left'
+            });
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            window.location.reload();
+        } else {
+            console.error('An unexpected error happened:', response.statusText);
+        }
+    }
+
+    const renderCell = React.useCallback((booking: Booking, columnKey: React.Key) => {
+        const cellValue = booking[columnKey as keyof Booking];
         switch (columnKey) {
             case "driver":
                 return (
                     <User
-                        avatarProps={{ radius: "lg", src: user.avatar }}
-                        description={user.car}
+                        avatarProps={{ radius: "lg", src: booking.avatar }}
+                        description={booking.car}
                         name={cellValue}
                     >
-                        {user.car}
+                        {booking.car}
                     </User>
                 );
             case "from":
                 return (
                     <div className="flex flex-col">
                         <p className="text-bold text-sm capitalize">{cellValue}</p>
-                        <p className="text-bold text-sm capitalize text-default-400">{user.to}</p>
+                        <p className="text-bold text-sm capitalize text-default-400">{booking.to}</p>
                     </div>
                 );
             case "seats":
@@ -57,43 +110,46 @@ export default function Aventones() {
             case "actions":
                 return (
                     <div className="relative flex justify-center items-center gap-1">
-                        <Tooltip color="warning" content="Edit this Aventon">
-                            <span onClick={() => router.push('/booking/edit')} className="text-lg text-warning cursor-pointer active:opacity-50">
+                        <Tooltip color="secondary" content="Edit this Aventon">
+                            <span onClick={() => {
+                                router.push('/booking/edit')
+                                localStorage.setItem('bookingId', booking.id);
+                            }} className="text-lg text-secondary cursor-pointer active:opacity-50">
                                 <EditIcon />
                             </span>
                         </Tooltip>
                         <Tooltip color="danger" content="Delete this Aventon">
-                            <span onClick={() => /*delete the aventon by ID*/ null} className="text-lg text-danger cursor-pointer active:opacity-50">
+                            <span onClick={() => { onOpen(); delID.current = booking.id; }} className="text-lg text-danger cursor-pointer active:opacity-50">
                                 <DeleteIcon />
                             </span>
                         </Tooltip>
                     </div>
                 );
             default:
-                // <span onClick={() => router.push('/booking/details')} className="text-lg text-default-400 cursor-pointer active:opacity-50">
-
                 return cellValue;
         }
     }, [router]);
 
     useEffect(() => {
         if (!tokenExists) {
-            router.push('/');
+            router.push('/login');
         }
-    }, []);
-
+    }, [tokenExists, router]);
 
     return (
         <div className={styles.mainAventones}>
             <h1 className="text-2xl text-bold text-center">My Aventones</h1>
             <br />
-            <div className="flex justify-end gap-2">
+            <div className="flex justify-between gap-2">
+                <Button color="secondary" variant="ghost" onClick={() => router.refresh}>
+                    Update Table (does nothing yet)
+                </Button>
                 <Button color="secondary" variant="ghost" onClick={() => router.push('/booking')}>
                     Book an Aventon
                 </Button>
             </div>
             <br />
-            <Table aria-label="Example table with custom cells">
+            <Table aria-label="Table with Aventones created by you" >
                 <TableHeader columns={columns}>
                     {(column) => (
                         <TableColumn key={column.uid} align={column.uid === "actions" ? "center" : "start"}>
@@ -101,14 +157,38 @@ export default function Aventones() {
                         </TableColumn>
                     )}
                 </TableHeader>
-                <TableBody items={users}>
-                    {(item) => (
-                        <TableRow key={item.id}>
-                            {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+                <TableBody items={bookings} loadingContent={<Spinner />}
+                >
+                    {(booking) => (
+                        <TableRow key={booking.id}>
+                            {(columnKey) => <TableCell>{renderCell(booking, columnKey)}</TableCell>}
                         </TableRow>
                     )}
                 </TableBody>
             </Table>
+            <Modal isOpen={isOpen} backdrop='blur' placement='center' onOpenChange={onOpenChange} isDismissable={false} isKeyboardDismissDisabled={true}>
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader className="flex flex-col gap-1">Warning</ModalHeader>
+                            <ModalBody>
+                                <p>
+                                    Are you sure you want to edit your profile?
+                                </p>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button color="secondary" variant="ghost" onPress={onClose}>
+                                    Cancel
+                                </Button>
+                                <Button color="danger" variant="ghost" onPress={() => { handleDelete(delID.current); onClose() }}>
+                                    Yes
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+            <ToastContainer />
         </div>
     );
 }
