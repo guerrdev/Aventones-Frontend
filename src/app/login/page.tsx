@@ -41,7 +41,7 @@ export default function LoginPage() {
 
     const postSession = async (user: { email: string; password: string; type: string; }) => {
         try {
-            const response = await fetch("http://10.0.0.4:3001/auth", {
+            const response = await fetch("http://127.0.0.1:3001/auth", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -64,7 +64,7 @@ export default function LoginPage() {
     }
 
     const getUser = async (token: any) => {
-        const response = await fetch('http://10.0.0.4:3001/user', {
+        const response = await fetch('http://127.0.0.1:3001/user', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

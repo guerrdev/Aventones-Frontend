@@ -1,11 +1,10 @@
 'use client'
-import { useAuth } from "../../AuthContext";
 import { useRouter } from 'next/navigation';
 import styles from "./bookingTable.module.css";
 import React, { useEffect, useState } from "react";
 import { EyeIcon } from "../../components/icons/EyeIcon";
-import fetchAventones from "../utils/aventonesFetch";
-import { Table, TableHeader, TableColumn, TableBody, Button, TableRow, TableCell, Tooltip, User, Spinner, useDisclosure } from "@nextui-org/react";
+import aventonesFetcher from "../utils/aventonesFetcher";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Tooltip, User, Spinner } from "@nextui-org/react";
 
 interface Booking {
     id: string;
@@ -21,13 +20,12 @@ interface Booking {
 export default function BookingTable() {
 
     const [bookings, setBookings] = useState<Booking[]>([]);
-    const bookingId = React.useRef("");
     const router = useRouter();
     const loadingState = bookings.length === 0 ? "loading" : "idle";
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            fetchAventones().then((result) => {
+            aventonesFetcher().then((result) => {
                 setBookings(result);
             });
         }
@@ -40,14 +38,6 @@ export default function BookingTable() {
         { name: "FEE", uid: "fee" },
         { name: "ACTIONS", uid: "actions" },
     ];
-
-    const getToken = () => {
-        const tokenRow = document.cookie.split(';').find((row) => row.trim().startsWith('token='));
-        if (tokenRow) {
-            return tokenRow.split('=')[1];
-        }
-        return null;
-    }
 
     const renderCell = React.useCallback((booking: Booking, columnKey: React.Key) => {
         const cellValue = booking[columnKey as keyof Booking];
@@ -99,10 +89,9 @@ export default function BookingTable() {
         }
     }, [router]);
 
-
     return (
         <div className={styles.mainTable}>
-            <h1 className="text-2xl text-bold text-center">Aventones Available to you</h1>
+            <h1 className="text-2xl text-bold text-center">Aventones Available</h1>
             <br />
             <Table aria-label="Table with Aventones Available to you" >
                 <TableHeader columns={columns}>

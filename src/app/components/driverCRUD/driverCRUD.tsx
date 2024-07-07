@@ -80,7 +80,7 @@ const RiderCRUD: React.FC<DriverCRUDProps> = ({ TextProps }) => {
         });
 
     const postData = async (driver: { first_name: string; last_name: string; cedula: string; dob: string; email: string; phone: number; model: string; plate: string; year: string; make: string; password: string; seats: number; }) => {
-        const response = await fetch("http://10.0.0.4:3001/driver", {
+        const response = await fetch("http://127.0.0.1:3001/driver", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

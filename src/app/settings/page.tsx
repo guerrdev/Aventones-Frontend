@@ -22,7 +22,7 @@ export default function RiderCRUD() {
 
     const deleteAccount = async () => {
         const token = getToken();
-        const response = await fetch("http://10.0.0.4:3001/user", {
+        const response = await fetch("http://127.0.0.1:3001/user", {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",

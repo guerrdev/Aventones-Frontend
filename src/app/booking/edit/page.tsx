@@ -62,7 +62,7 @@ export default function BookingDetailsPage() {
 
     const updateBooking = async (booking: any) => {
         const token = getToken();
-        const response = await fetch(`http://10.0.0.4:3001/booking/?id=${bookingId}`, {
+        const response = await fetch(`http://127.0.0.1:3001/booking/?id=${bookingId}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -72,6 +72,7 @@ export default function BookingDetailsPage() {
         });
         if (response.ok) {
             toastOK();
+            localStorage.removeItem('bookingId');
             await new Promise(resolve => setTimeout(resolve, 1000));
             window.location.reload();
         }
@@ -85,7 +86,7 @@ export default function BookingDetailsPage() {
         const fetchBookingData = async () => {
             try {
                 const token = getToken();
-                const response = await fetch(`http://10.0.0.4:3001/booking/?id=${bookingId}`, {
+                const response = await fetch(`http://127.0.0.1:3001/booking/?id=${bookingId}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

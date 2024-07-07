@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { EyeIcon } from "../components/icons/EyeIcon";
 import { EditIcon } from "../components/icons/EditIcon";
 import { DeleteIcon } from "../components/icons/DeleteIcon";
-import fetchAventones from "../components/utils/aventonesFetch";
+import aventonesFetcher from "../components/utils/aventonesFetcher";
 import { Table, TableHeader, TableColumn, TableBody, Modal, ModalFooter, ModalContent, ModalBody, ModalHeader, Button, TableRow, TableCell, Tooltip, User, Spinner, useDisclosure } from "@nextui-org/react";
 import { toast, ToastContainer } from "react-toastify";
 import { useTheme } from "next-themes";
@@ -34,7 +34,7 @@ export default function Aventones() {
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            fetchAventones().then((result) => {
+            aventonesFetcher().then((result) => {
                 setBookings(result);
             });
         }
@@ -58,7 +58,7 @@ export default function Aventones() {
 
     const handleDelete = async (id: string) => {
         const token = getToken();
-        const response = await fetch(`http://10.0.0.4:3001/booking/?id=${id}`, {
+        const response = await fetch(`http://127.0.0.1:3001/booking/?id=${id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -145,10 +145,7 @@ export default function Aventones() {
         <div className={styles.mainAventones}>
             <h1 className="text-2xl text-bold text-center">My Aventones</h1>
             <br />
-            <div className="flex justify-between gap-2">
-                <Button color="secondary" variant="ghost" onClick={() => router.refresh}>
-                    Update Table (does nothing yet)
-                </Button>
+            <div className="flex justify-end gap-2">
                 <Button color="secondary" variant="ghost" onClick={() => router.push('/booking')}>
                     Book an Aventon
                 </Button>

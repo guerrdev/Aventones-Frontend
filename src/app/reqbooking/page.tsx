@@ -70,7 +70,7 @@ export default function BookingPage() {
     const postRequest = async (request: { pickup: string; destination: string; days: string[]; time: string; }) => {
         const token = getToken();
         try {
-            const response = await fetch("http://10.0.0.4:3001/reqaventon", {
+            const response = await fetch("http://127.0.0.1:3001/reqaventon", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

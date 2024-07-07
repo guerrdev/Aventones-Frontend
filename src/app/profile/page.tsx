@@ -120,7 +120,7 @@ const ProfilePage: React.FC = () => {
 
     const updateProfile = async (user: any) => {
         const token = getToken();
-        const response = await fetch('http://10.0.0.4:3001/user', {
+        const response = await fetch('http://127.0.0.1:3001/user', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -143,7 +143,7 @@ const ProfilePage: React.FC = () => {
         const fetchUserData = async () => {
             try {
                 const token = getToken();
-                const response = await fetch('http://10.0.0.4:3001/user', {
+                const response = await fetch('http://127.0.0.1:3001/user', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

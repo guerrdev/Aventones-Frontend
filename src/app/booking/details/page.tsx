@@ -45,7 +45,7 @@ export default function BookingDetailsPage() {
     const saveASpot = async (booking: any) => {
         const bookingId = localStorage.getItem('bookingId');
         const token = getToken();
-        const response = await fetch(`http://10.0.0.4:3001/booking/?id=${bookingId}`, {
+        const response = await fetch(`http://127.0.0.1:3001/booking/?id=${bookingId}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -61,6 +61,7 @@ export default function BookingDetailsPage() {
                 theme: theme,
                 position: 'top-left'
             });
+            localStorage.removeItem('bookingId');
             await new Promise(resolve => setTimeout(resolve, 1500));
             router.push('/');
         } else {
@@ -78,7 +79,7 @@ export default function BookingDetailsPage() {
         const bookingId = localStorage.getItem('bookingId');
         const fetchBookingData = async () => {
             try {
-                const response = await fetch(`http://10.0.0.4:3001/booking/?id=${bookingId}`, {
+                const response = await fetch(`http://127.0.0.1:3001/booking/?id=${bookingId}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
