@@ -5,10 +5,12 @@ import { useAuth } from '../AuthContext';
 import styles from './profile.module.css';
 import { Chip, Card, CardHeader, CardBody, CardFooter, Input, Button, Divider, Spinner, Checkbox, Modal, ModalHeader, ModalContent, ModalBody, ModalFooter, useDisclosure, Tooltip, input } from "@nextui-org/react";
 import { toast, ToastContainer } from 'react-toastify';
+import { useTheme } from 'next-themes';
 
 const ProfilePage: React.FC = () => {
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { theme } = useTheme();
     const [isReadOnly, setisReadOnly] = React.useState(true);
     const [phone, setPhone] = useState(Number);
     const [seats, setSeats] = useState(Number);
@@ -32,7 +34,7 @@ const ProfilePage: React.FC = () => {
                 hideProgressBar: true,
                 autoClose: 2000,
                 type: 'error',
-                theme: 'dark',
+                theme: theme,
                 position: 'top-left'
             });
         }
@@ -43,7 +45,7 @@ const ProfilePage: React.FC = () => {
                 hideProgressBar: true,
                 autoClose: 2000,
                 type: 'success',
-                theme: 'dark',
+                theme: theme,
                 position: 'top-left'
             });
         }
@@ -66,7 +68,7 @@ const ProfilePage: React.FC = () => {
             hideProgressBar: true,
             autoClose: 2000,
             type: 'success',
-            theme: 'dark',
+            theme: theme,
             position: 'top-left'
         });
     const toastNOK = () =>
@@ -74,7 +76,7 @@ const ProfilePage: React.FC = () => {
             hideProgressBar: true,
             autoClose: 2000,
             type: 'error',
-            theme: 'dark',
+            theme: theme,
             position: 'top-left'
         });
 
@@ -118,7 +120,7 @@ const ProfilePage: React.FC = () => {
 
     const updateProfile = async (user: any) => {
         const token = getToken();
-        const response = await fetch('http://127.0.0.1:3001/user', {
+        const response = await fetch('http://10.0.0.4:3001/user', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -141,7 +143,7 @@ const ProfilePage: React.FC = () => {
         const fetchUserData = async () => {
             try {
                 const token = getToken();
-                const response = await fetch('http://127.0.0.1:3001/user', {
+                const response = await fetch('http://10.0.0.4:3001/user', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

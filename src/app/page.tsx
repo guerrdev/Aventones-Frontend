@@ -1,21 +1,19 @@
 'use client'
 import styles from "./page.module.css";
-import BookingTable from "./aventones/page";
+import BookingTable from "./components/bookingTable/bookingTable";
 
 export default function Home() {
 
   return (
-    <main className={styles.main}>
-      <h1 className="text-2xl text-bold text-center">Aventones Available</h1>
-      <br />
-      <div className={styles.table}>
-        {/* <BookingTable /> */}
+    <div className={styles.main}>
+      <main className={styles.main}>
+        <BookingTable />
         <br />
         Powered by{" "}
         <span className={styles.center}>
           Aventones. Inc
         </span>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }

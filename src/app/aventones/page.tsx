@@ -2,13 +2,14 @@
 import { useAuth } from "../AuthContext";
 import { useRouter } from 'next/navigation';
 import styles from "./aventones.module.css";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { EyeIcon } from "../components/icons/EyeIcon";
 import { EditIcon } from "../components/icons/EditIcon";
 import { DeleteIcon } from "../components/icons/DeleteIcon";
-import fetchAventones from "./aventonesFetch";
+import fetchAventones from "../components/utils/aventonesFetch";
 import { Table, TableHeader, TableColumn, TableBody, Modal, ModalFooter, ModalContent, ModalBody, ModalHeader, Button, TableRow, TableCell, Tooltip, User, Spinner, useDisclosure } from "@nextui-org/react";
 import { toast, ToastContainer } from "react-toastify";
+import { useTheme } from "next-themes";
 
 interface Booking {
     id: string;
@@ -20,20 +21,24 @@ interface Booking {
     avatar: string;
     car: string;
 }
-let bookings: Booking[] = []
-
-if (typeof window !== 'undefined') {
-    fetchAventones().then((result) => {
-        bookings = result;
-    });
-}
 
 export default function Aventones() {
-    const delID = React.useRef("");
 
+    const [bookings, setBookings] = useState<Booking[]>([]);
+    const loadingState = bookings.length === 0 ? "loading" : "idle";
+    const delID = React.useRef("");
     const { tokenExists } = useAuth();
     const router = useRouter();
+    const {theme} = useTheme();
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            fetchAventones().then((result) => {
+                setBookings(result);
+            });
+        }
+    }, []);
 
     const columns = [
         { name: "DRIVER", uid: "driver" },
@@ -53,7 +58,7 @@ export default function Aventones() {
 
     const handleDelete = async (id: string) => {
         const token = getToken();
-        const response = await fetch(`http://127.0.0.1:3001/booking/?id=${id}`, {
+        const response = await fetch(`http://10.0.0.4:3001/booking/?id=${id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -65,7 +70,7 @@ export default function Aventones() {
                 hideProgressBar: true,
                 autoClose: 2000,
                 type: 'success',
-                theme: 'dark',
+                theme: theme,
                 position: 'top-left'
             });
             await new Promise(resolve => setTimeout(resolve, 2000));
@@ -157,7 +162,7 @@ export default function Aventones() {
                         </TableColumn>
                     )}
                 </TableHeader>
-                <TableBody items={bookings} loadingContent={<Spinner />}
+                <TableBody items={bookings} loadingContent={<Spinner label="Loading..." color="secondary" />} loadingState={loadingState}
                 >
                     {(booking) => (
                         <TableRow key={booking.id}>
@@ -173,7 +178,7 @@ export default function Aventones() {
                             <ModalHeader className="flex flex-col gap-1">Warning</ModalHeader>
                             <ModalBody>
                                 <p>
-                                    Are you sure you want to edit your profile?
+                                    Are you sure you want to delete this Aventon?
                                 </p>
                             </ModalBody>
                             <ModalFooter>

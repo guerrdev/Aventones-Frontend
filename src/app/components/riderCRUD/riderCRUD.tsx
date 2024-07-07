@@ -51,7 +51,7 @@ const RiderCRUD: React.FC<RiderCRUDProps> = ({ TextProps }) => {
         createRider(rider);
     }
     const createRider = async (rider: { first_name: string; last_name: string; cedula: string; dob: string; email: string; phone: number; password: string; }) => {
-        const response = await fetch("http://127.0.0.1:3001/rider", {
+        const response = await fetch("http://10.0.0.4:3001/rider", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

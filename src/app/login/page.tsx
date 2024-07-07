@@ -1,7 +1,6 @@
 'use client'
 import { toast } from 'react-toastify';
 import { useTheme } from "next-themes";
-import { jwtDecode } from "jwt-decode";
 import styles from "./login.module.css";
 import { useAuth } from "../AuthContext";
 import { useRouter } from 'next/navigation'
@@ -13,8 +12,7 @@ import { EyeSlashFilledIcon } from "../components/icons/EyeSlashFilledIcon"
 
 export default function LoginPage() {
 
-    const [mounted, setMounted] = useState(false)
-    const { theme, setTheme } = useTheme()
+    const { theme } = useTheme()
     const [selected, setSelected] = React.useState("rider");
     const { tokenExists, setokenExists } = useAuth();
     const router = useRouter()
@@ -25,7 +23,7 @@ export default function LoginPage() {
 
     const handleClick = () => {
         let user = {
-            email: email,
+            email: email.toLowerCase(),
             password: password,
             type: selected
         }
@@ -37,13 +35,13 @@ export default function LoginPage() {
             hideProgressBar: true,
             autoClose: 2000,
             type: 'error',
-            theme: 'dark',
+            theme: theme,
             position: 'top-left',
         });
 
     const postSession = async (user: { email: string; password: string; type: string; }) => {
         try {
-            const response = await fetch("http://127.0.0.1:3001/auth", {
+            const response = await fetch("http://10.0.0.4:3001/auth", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -66,7 +64,7 @@ export default function LoginPage() {
     }
 
     const getUser = async (token: any) => {
-        const response = await fetch('http://127.0.0.1:3001/user', {
+        const response = await fetch('http://10.0.0.4:3001/user', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -82,11 +80,6 @@ export default function LoginPage() {
             router.push('/');
         }
     }, [tokenExists, router]);
-
-    useEffect(() => {
-        setMounted(true)
-    }, [])
-    if (!mounted) return null
 
     return (
         <>

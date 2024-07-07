@@ -5,22 +5,25 @@ import styles from "./details.module.css";
 import { useRouter } from 'next/navigation'
 import { parseTime } from "@internationalized/date";
 import { ClockCircleLinearIcon } from '../../components/icons/ClockCircleLinearIcon';
-import { Card, CardBody, Input, CheckboxGroup, Checkbox, Spinner, TimeInput, Image, TimeInputValue } from "@nextui-org/react";
+import { Card, CardBody, Input, CheckboxGroup, Checkbox, Spinner, TimeInput, Image, TimeInputValue, Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/react";
 import { useTheme } from "next-themes";
 import { toast, ToastContainer } from "react-toastify";
+import { jwtDecode } from "jwt-decode";
 
 export default function BookingDetailsPage() {
 
     const router = useRouter()
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const { tokenExists } = useAuth();
     const { theme } = useTheme()
     const [time, setTime] = React.useState<TimeInputValue>();
     const [pickup, setPickup] = useState("");
+    const [riders, setRiders] = useState<string[]>([]);
     const [destination, setDestination] = useState("");
-    const [selected, setSelected] = React.useState([]);
     const [days, setDays] = React.useState([]);
     const [fee, setFee] = useState(Number);
     const [seats, setSeats] = useState(Number);
+
     const getToken = () => {
         const tokenRow = document.cookie.split(';').find((row) => row.trim().startsWith('token='));
         if (tokenRow) {
@@ -29,16 +32,56 @@ export default function BookingDetailsPage() {
         return null;
     }
 
+    const handleClick = () => {
+        const decodedToken: { userId: string; } = jwtDecode(getToken() as string);
+        riders.push(decodedToken.userId);
+        let booking = {
+            riders: riders,
+            seatsAvailable: seats - 1,
+        };
+        saveASpot(booking);
+    }
+
+    const saveASpot = async (booking: any) => {
+        const bookingId = localStorage.getItem('bookingId');
+        const token = getToken();
+        const response = await fetch(`http://10.0.0.4:3001/booking/?id=${bookingId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(booking)
+        });
+        if (response.ok) {
+            toast('You have saved a spot!', {
+                hideProgressBar: true,
+                autoClose: 2000,
+                type: 'success',
+                theme: theme,
+                position: 'top-left'
+            });
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            router.push('/');
+        } else {
+            toast('Error while saving a spot!', {
+                hideProgressBar: true,
+                autoClose: 2000,
+                type: 'error',
+                theme: theme,
+                position: 'top-left'
+            });
+        }
+    }
+
     useEffect(() => {
         const bookingId = localStorage.getItem('bookingId');
-        const fetchUserData = async () => {
+        const fetchBookingData = async () => {
             try {
-                const token = getToken();
-                const response = await fetch(`http://127.0.0.1:3001/booking/?id=${bookingId}`, {
+                const response = await fetch(`http://10.0.0.4:3001/booking/?id=${bookingId}`, {
                     method: 'GET',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
+                        'Content-Type': 'application/json'
                     }
                 });
                 if (response.ok) {
@@ -49,8 +92,9 @@ export default function BookingDetailsPage() {
                     setSeats(data.seatsAvailable);
                     setFee(data.fee);
                     setPickup(data.pickup);
+                    setRiders(data.riders);
                 } else {
-                    console.error('Failed to fetch user data');
+                    console.error('Failed to fetch booking data');
                     router.push('/login');
                 }
             } catch (error) {
@@ -60,15 +104,15 @@ export default function BookingDetailsPage() {
         };
 
         if (tokenExists) {
-            fetchUserData();
+            fetchBookingData();
         } else {
             router.push('/login');
         }
     }, [tokenExists, router]);
 
-    if (!time) return <div className={styles.bookingMain}> <Spinner label="Loading..." color="secondary" /></div>;
+    if (!time) return <div className="text-2xl text-bold text-center"> <Spinner label="Loading..." color="secondary" /></div>;
     return (
-        <div className={styles.bookingMain}>
+        <div className={styles.detailsMain}>
             {theme === "dark" ? (<Image
                 isBlurred
                 src="/sedanlight.png"
@@ -88,7 +132,7 @@ export default function BookingDetailsPage() {
                 </CardBody>
             </Card>
             <br />
-            <div className={styles.bookingCRUD}>
+            <div className={styles.detailsInputs}>
                 <Input color="secondary" type="text" value={pickup} variant="bordered" label="Departure From" isReadOnly />
                 <Input color="secondary" type="text" value={destination} variant="bordered" label="Arrive To" isRequired isReadOnly />
                 <Input color="secondary" type="Number" value={fee.toString()} variant="bordered" label="Fee" isRequired startContent={
@@ -126,7 +170,32 @@ export default function BookingDetailsPage() {
                     <Checkbox value="Sunday">Sunday</Checkbox>
                 </CheckboxGroup>
                 <br />
+                <div className="flex gap-1">
+                    <Button variant="ghost" color="secondary" onPress={onOpen}>Wanna a spot?</Button>
+                </div>
             </>
+            <Modal isOpen={isOpen} backdrop='blur' placement='center' onOpenChange={onOpenChange} isDismissable={false} isKeyboardDismissDisabled={true}>
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader className="flex flex-col gap-1">Warning</ModalHeader>
+                            <ModalBody>
+                                <p>
+                                    Are you sure you want to save a spot on this Aventon?
+                                </p>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button color="secondary" variant="ghost" onPress={onClose}>
+                                    Cancel
+                                </Button>
+                                <Button color="danger" variant="ghost" onPress={() => { handleClick(); onClose() }}>
+                                    Yes
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
             <ToastContainer />
         </div>
     );

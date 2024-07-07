@@ -1,13 +1,12 @@
-.mainAventones {
+.mainTable {
     flex-direction: column;
     padding: 4rem;
     align-items: center;
-    min-height: 100vh;
     font-family: var(--monserrat);
 }
 
 @media (max-width: 700px) {
-    .mainAventones {
+    .mainTable {
         padding: 0rem;
     }
 }

@@ -1,13 +1,13 @@
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from "react-toastify";
 import { useRouter } from 'next/navigation'
 import styles from "./driverCRUD.module.css";
-import { ToastContainer } from 'react-toastify';
 import { useDateFormatter } from "@react-aria/i18n";
 import React, { SetStateAction, useState } from "react";
 import { EyeFilledIcon } from "../icons/EyeFilledIcon"
 import { EyeSlashFilledIcon } from "../icons/EyeSlashFilledIcon"
 import { Card, CardBody, DatePicker, Input, Button } from "@nextui-org/react";
 import { today, getLocalTimeZone, DateValue, CalendarDate } from "@internationalized/date";
+import { useTheme } from "next-themes";
 
 interface DriverCRUDProps {
     TextProps: string;
@@ -16,6 +16,7 @@ interface DriverCRUDProps {
 const RiderCRUD: React.FC<DriverCRUDProps> = ({ TextProps }) => {
 
     const Router = useRouter()
+    const theme = useTheme();
     let formatter = useDateFormatter({ dateStyle: "short" });
     let defaultDate = today(getLocalTimeZone());
     const [isVisible, setIsVisible] = React.useState(false);
@@ -56,7 +57,7 @@ const RiderCRUD: React.FC<DriverCRUDProps> = ({ TextProps }) => {
                 hideProgressBar: true,
                 autoClose: 2000,
                 type: 'error',
-                theme: 'dark',
+                theme: theme.theme,
                 position: 'top-left'
             });
         }
@@ -74,12 +75,12 @@ const RiderCRUD: React.FC<DriverCRUDProps> = ({ TextProps }) => {
             hideProgressBar: true,
             autoClose: 2000,
             type: 'success',
-            theme: 'dark',
+            theme: theme.theme,
             position: 'top-left'
         });
 
     const postData = async (driver: { first_name: string; last_name: string; cedula: string; dob: string; email: string; phone: number; model: string; plate: string; year: string; make: string; password: string; seats: number; }) => {
-        const response = await fetch("http://127.0.0.1:3001/driver", {
+        const response = await fetch("http://10.0.0.4:3001/driver", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

@@ -28,7 +28,7 @@ const getCookies = (): { [key: string]: string } => {
 };
 
 const getUserData = async (token: any) => {
-    const response = await fetch("http://127.0.0.1:3001/user", {
+    const response = await fetch("http://10.0.0.4:3001/user", {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -42,15 +42,19 @@ const getUserData = async (token: any) => {
 }
 
 const verifyToken = async (token: any) => {
-    const response = await fetch("http://127.0.0.1:3001/verifyauth", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-    });
-    if (response.ok) {
-        return true;
+    try {
+        const response = await fetch("http://10.0.0.4:3001/verifyauth", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+        });
+        if (response.ok) {
+            return true;
+        }
+    } catch (error) {
+        console.log(error);
     }
 }
 

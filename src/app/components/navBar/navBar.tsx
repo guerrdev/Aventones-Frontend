@@ -73,13 +73,11 @@ export default function NavBar() {
                     </Link>
                 </NavbarItem>
                 <NavbarItem>
-                    {tokenExists && role === 'Driver' ? (<Link color="foreground" href="/aventones">My Aventones</Link>) :
-                        <Link color="foreground" href="/reqbooking">Request an Aventon</Link>}
+                    {tokenExists ? (tokenExists && role === 'Driver' ? (<Link color="foreground" href="/aventones">My Aventones</Link>) :
+                        <Link color="foreground" href="/reqbooking">Request an Aventon</Link>) : null}
                 </NavbarItem>
                 <NavbarItem>
-                    <Link color="foreground" href="/settings">
-                        Settings
-                    </Link>
+                    {tokenExists ? (<Link color="foreground" href="/settings">Settings</Link>) : null}
                 </NavbarItem>
             </NavbarContent>
             <NavbarContent as="div" justify="end">
@@ -88,7 +86,7 @@ export default function NavBar() {
                         {tokenExists ? (
                             <Avatar
                                 src={userPicture}
-                                alt="Zoey"
+                                alt="User Profile Picture"
                                 size="sm"
                             />
                         ) : (
@@ -111,10 +109,11 @@ export default function NavBar() {
                             <div aria-label="User Email" className="font-semibold">Signed in as</div>
                             <div aria-label="User Email" className="font-semibold">{email}</div>
                         </DropdownItem>
-                        <DropdownItem aria-label="aventones" key="aventones" onPress={() => Router.push('/aventones')}>My Aventones</DropdownItem>
+                        {role === 'Driver' ? (<DropdownItem aria-label="aventones" key="aventones" onPress={() => Router.push('/aventones')}>My Aventones</DropdownItem>) :
+                            <DropdownItem aria-label="aventones" key="aventones" onPress={() => Router.push('/reqbooking')}>Request an Aventon</DropdownItem>}
                         <DropdownItem aria-label="User Profile" key="profile" onPress={() => Router.push('/profile')}>My Profile</DropdownItem>
                         <DropdownItem aria-label="User Settings" key="settings" onPress={() => Router.push('/settings')}>Settings</DropdownItem>
-                        <DropdownItem aria-label="Help" key="help_and_feedback" onPress={() => Router.push('/help')}>Help & Feedback</DropdownItem>
+                        {/* <DropdownItem aria-label="Help" key="help_and_feedback" onPress={() => Router.push('/help')}>Help & Feedback</DropdownItem> */}
                         <DropdownItem aria-label="Log Out" onPress={() => {
                             userLogout(); window.location.reload(); setokenExists(false);
                         }}
@@ -169,6 +168,27 @@ export default function NavBar() {
                     <React.Fragment>
                         <NavbarMenuItem>
                             <Link color="secondary" href="/">Home</Link>
+                        </NavbarMenuItem>
+                        <NavbarMenuItem>
+                            {!tokenExists ? <Link color="secondary" href="/login">Log In</Link> : null}
+                        </NavbarMenuItem>
+                        <NavbarMenuItem>
+                            {!tokenExists ? <Link color="secondary" href="/register">Register</Link> : null}
+                        </NavbarMenuItem>
+                        <NavbarMenuItem>
+                            {tokenExists ? (tokenExists && role === 'Driver' ? (<Link color="foreground" href="/aventones">My Aventones</Link>) :
+                                <Link color="foreground" href="/reqbooking">Request an Aventon</Link>) : null}
+                        </NavbarMenuItem>
+                        <NavbarMenuItem>
+                            {tokenExists ? (<Link color="foreground" href="/settings">Settings</Link>) : null}
+                        </NavbarMenuItem>
+                        <NavbarMenuItem>
+                            {tokenExists ? (tokenExists && role === 'Driver' ? (<Link color="foreground" href="/aventones">My Aventones</Link>) :
+                                <Link color="foreground" href="/reqbooking">Request an Aventon</Link>) : null}
+                        </NavbarMenuItem>
+                        <NavbarMenuItem>
+                            {tokenExists ? (tokenExists && role === 'Driver' ? (<Link color="foreground" href="/aventones">My Aventones</Link>) :
+                                <Link color="foreground" href="/reqbooking">Request an Aventon</Link>) : null}
                         </NavbarMenuItem>
                     </React.Fragment>
                 )}
