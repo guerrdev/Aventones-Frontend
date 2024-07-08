@@ -20,6 +20,9 @@ interface Booking {
 export default function BookingTable() {
 
     const [bookings, setBookings] = useState<Booking[]>([]);
+    const [originalBookings, setOriginalBookings] = useState<Booking[]>([]);
+    const [searchFrom, setSearchFrom] = useState<string>('');
+    const [searchTo, setSearchTo] = useState<string>('');
     const router = useRouter();
     const loadingState = bookings.length === 0 ? "loading" : "idle";
 
@@ -27,6 +30,7 @@ export default function BookingTable() {
         if (typeof window !== 'undefined') {
             AventonesFetcher().then((result: React.SetStateAction<Booking[]>) => {
                 setBookings(result);
+                setOriginalBookings(result);
             });
         }
     }, []);
@@ -89,10 +93,43 @@ export default function BookingTable() {
         }
     }, [router]);
 
+    const handleSearch = () => {
+        const filteredBookings = originalBookings.filter((booking) => {
+            const fromMatch = searchFrom ? booking.from.toLowerCase().includes(searchFrom.toLowerCase()) : true;
+            const toMatch = searchTo ? booking.to.toLowerCase().includes(searchTo.toLowerCase()) : true;
+            return fromMatch && toMatch;
+        });
+        setBookings(filteredBookings);
+    };
+
+    const handleReset = () => {
+        setSearchFrom('');
+        setSearchTo('');
+        setBookings(originalBookings);
+    };
+
     return (
         <div className={styles.mainTable}>
             <h1 className="text-2xl text-bold text-center">Aventones Available</h1>
             <br />
+            <div className="flex justify-center gap-2 mb-4">
+                <input
+                    type="text"
+                    placeholder="Pickup Location"
+                    value={searchFrom}
+                    onChange={(e) => setSearchFrom(e.target.value)}
+                    className="input"
+                />
+                <input
+                    type="text"
+                    placeholder="Destination"
+                    value={searchTo}
+                    onChange={(e) => setSearchTo(e.target.value)}
+                    className="input"
+                />
+                <button onClick={handleSearch} className="button">Search</button>
+                <button onClick={handleReset} className="button">Reset</button>
+            </div>
             <Table aria-label="Table with Aventones Available to you" >
                 <TableHeader columns={columns}>
                     {(column) => (
@@ -101,8 +138,7 @@ export default function BookingTable() {
                         </TableColumn>
                     )}
                 </TableHeader>
-                <TableBody items={bookings} loadingContent={<Spinner label="Loading..." color="secondary" />} loadingState={loadingState}
-                >
+                <TableBody items={bookings} loadingContent={<Spinner label="Loading..." color="secondary" />} loadingState={loadingState}>
                     {(booking) => (
                         <TableRow key={booking.id}>
                             {(columnKey) => <TableCell>{renderCell(booking, columnKey)}</TableCell>}
