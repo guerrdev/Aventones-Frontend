@@ -87,7 +87,7 @@ export default function RequestAccepter() {
             });
             if (response && response.status == 201) {
                 toastOK();
-                deleteRequest();
+                await deleteRequest();
                 await new Promise(resolve => setTimeout(resolve, 1500));
                 window.location.reload();
             }
@@ -120,7 +120,7 @@ export default function RequestAccepter() {
     }
 
     useEffect(() => {
-        setRequestId(localStorage.getItem('bookingId') ?? "");
+        setRequestId(localStorage.getItem('requestId') ?? "");
         const fetchRequestData = async () => {
             try {
                 const token = getToken();
@@ -133,12 +133,13 @@ export default function RequestAccepter() {
                 });
                 if (response.ok) {
                     const data = await response.json();
+                    console.log(data.pickup);
                     setPickup(data.pickup);
                     setDestination(data.destination);
                     setTime(parseTime(data.time));
                     setDays(data.days);
                 } else {
-                    console.error('Failed to fetch booking data');
+                    console.error('Failed to fetch request data');
                     router.push('/login');
                 }
             } catch (error) {
