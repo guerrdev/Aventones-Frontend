@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import styles from "./bookingTable.module.css";
 import React, { useEffect, useState } from "react";
 import { EyeIcon } from "../../components/icons/EyeIcon";
-import aventonesFetcher from "../utils/aventonesFetcher";
+import AventonesFetcher from "../utils/aventonesFetcher";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Tooltip, User, Spinner } from "@nextui-org/react";
 
 interface Booking {
@@ -25,7 +25,7 @@ export default function BookingTable() {
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            aventonesFetcher().then((result) => {
+            AventonesFetcher().then((result: React.SetStateAction<Booking[]>) => {
                 setBookings(result);
             });
         }

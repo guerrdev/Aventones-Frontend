@@ -48,8 +48,26 @@ const RiderCRUD: React.FC<RiderCRUDProps> = ({ TextProps }) => {
             phone: phone,
             password: password
         }
-        createRider(rider);
+        if (verifyFields()) {
+            createRider(rider);
+        } else {
+            toast('Please fill all fields', {
+                hideProgressBar: true,
+                autoClose: 2000,
+                type: 'error',
+                theme: 'dark',
+                position: 'top-left'
+            });
+        }
     }
+
+    const verifyFields = () => {
+        if (fName === "" || lName === "" || cedula === "" || email === "" || phone === 0 || password === "") {
+            return false;
+        }
+        return true;
+    }
+
     const createRider = async (rider: { first_name: string; last_name: string; cedula: string; dob: string; email: string; phone: number; password: string; }) => {
         const response = await fetch("http://127.0.0.1:3001/rider", {
             method: "POST",
@@ -79,7 +97,7 @@ const RiderCRUD: React.FC<RiderCRUDProps> = ({ TextProps }) => {
                 <Input type="text" color="secondary" variant="bordered" label="Cédula" isRequired onChange={(e) => setCedula(e.target.value)} />
                 <DatePicker color="secondary" showMonthAndYearPickers variant="bordered" label="Birth Date" calendarProps={{ onFocusChange: setDob }} onChange={(value) => setDob(value as CalendarDate)} />
                 <Input color="secondary" type="email" variant="bordered" label="Email" isRequired onChange={(e) => setEmail(e.target.value)} />
-                <Input color="secondary" type="number" variant="bordered" label="Phone Number" isRequired onChange={(e) => setPhone(Number(e.target.value))} />
+                <Input color="secondary" type="number" variant="bordered" min="1" label="Phone Number" isRequired onChange={(e) => setPhone(Number(e.target.value))} />
             </div>
             <div className={styles.registerPassword}>
                 <Input label="Password" variant="bordered" endContent={

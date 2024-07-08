@@ -1,33 +1,62 @@
 'use client'
 
-const aventonesFetcher = async () => {
-    const bookings: { id: any; driver: string; from: any; to: any; seats: number; fee: string; avatar: any; car: string; }[] = []; // Declare the 'bookings' variable
+import { jwtDecode } from "jwt-decode";
 
-        const response = await fetch('http://127.0.0.1:3001/booking', {
+const aventonesFetcher = async () => {
+
+    const bookings: { id: any; driver: string; from: any; to: any; seats: number; fee: string; avatar: any; car: string; }[] = [];
+    let response;
+    const getTokens = () => {
+        const tokenRow = document.cookie.split(';').find((row) => row.trim().startsWith('token='));
+        if (tokenRow) {
+            return tokenRow.split('=')[1];
+        }
+        return null;
+    }
+
+    let token = getTokens();
+    let decodedToken: { userId: string; type: string; } | undefined;
+    try {
+        decodedToken = jwtDecode(token as string);
+    } catch (error) {
+        console.log(error);
+    }
+
+    if (token && decodedToken && decodedToken.type === 'driver') {
+        response = await fetch(`http://127.0.0.1:3001/booking/?driver=${decodedToken.userId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             }
         });
-        if (response.ok) {
-            const data = await response.json();
-            for (const booking of data) {
-                let DBbooking = {
-                    id: booking._id,
-                    driver: `${booking.driver.first_name + " " + booking.driver.last_name}`,
-                    from: booking.pickup,
-                    to: booking.destination,
-                    seats: Number(booking.seatsAvailable),
-                    fee: `${'$' + booking.fee}`,
-                    avatar: booking.driver.profilePicture,
-                    car: `${booking.driver.make + " " + booking.driver.model + " " + booking.driver.year}`
-                }
-                bookings.push(DBbooking);
+    } else {
+
+        response = await fetch(`http://127.0.0.1:3001/booking/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
             }
-        } else {
-            console.error('An unexpected error happened:', response.statusText);
+        });
+    }
+    if (response !== undefined && response.ok) {
+        const data = await response.json();
+        for (const booking of data) {
+            let DBbooking = {
+                id: booking._id,
+                driver: `${booking.driver.first_name + " " + booking.driver.last_name}`,
+                from: booking.pickup,
+                to: booking.destination,
+                seats: Number(booking.seatsAvailable),
+                fee: `${'$' + booking.fee}`,
+                avatar: booking.driver.profilePicture,
+                car: `${booking.driver.make + " " + booking.driver.model + " " + booking.driver.year}`
+            }
+            bookings.push(DBbooking);
         }
-        return bookings;
-    };
+    } else {
+        console.error('An unexpected error happened:', response?.statusText);
+    }
+    return bookings;
+};
 
 export default aventonesFetcher;

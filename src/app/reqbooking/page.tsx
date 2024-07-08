@@ -45,7 +45,6 @@ export default function BookingPage() {
         if (pickup == "" || destination == "" || days.length == 0) {
             return false;
         }
-        console.log(pickup, destination, days, time.toString());
         return true;
     }
     const toastNOK = () => {

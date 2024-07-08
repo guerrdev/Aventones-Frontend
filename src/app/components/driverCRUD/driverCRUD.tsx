@@ -30,7 +30,7 @@ const RiderCRUD: React.FC<DriverCRUDProps> = ({ TextProps }) => {
     const [password, setPassword] = useState("");
     const [seats, setSeats] = useState<number>(0);
     const [model, setModel] = useState("");
-    const [year, setYear] = useState("");
+    const [year, setYear] = useState<number>(0);
     const [plate, setPlate] = useState("");
     const [make, setMake] = useState("");
 
@@ -64,7 +64,10 @@ const RiderCRUD: React.FC<DriverCRUDProps> = ({ TextProps }) => {
     }
 
     const verifyFields = () => {
-        if (fName == "" || lName == "" || cedula == "" || dob == defaultDate || email == "" || phone == 0 || model == "" || plate == "" || year == "" || make == "" || seats == 0 || password == "") {
+        if (fName == "" || lName == "" || cedula == "" || dob == defaultDate || email == "" ||
+            model == "" || plate == "" || make == "" || year == 0 ||
+            make == "" || password == "" || phone == 0 || seats == 0 ) {
+
             return false;
         }
         return true;
@@ -79,7 +82,7 @@ const RiderCRUD: React.FC<DriverCRUDProps> = ({ TextProps }) => {
             position: 'top-left'
         });
 
-    const postData = async (driver: { first_name: string; last_name: string; cedula: string; dob: string; email: string; phone: number; model: string; plate: string; year: string; make: string; password: string; seats: number; }) => {
+    const postData = async (driver: { first_name: string; last_name: string; cedula: string; dob: string; email: string; phone: number; model: string; plate: string; year: number; make: string; password: string; seats: number; }) => {
         const response = await fetch("http://127.0.0.1:3001/driver", {
             method: "POST",
             headers: {
@@ -108,7 +111,7 @@ const RiderCRUD: React.FC<DriverCRUDProps> = ({ TextProps }) => {
                 <Input color="secondary" type="text" variant="bordered" label="Cédula" isRequired onChange={(e) => setCedula(e.target.value)} />
                 <DatePicker color="secondary" showMonthAndYearPickers variant="bordered" label="Birth Date" calendarProps={{ onFocusChange: setDob }} onChange={(value: DateValue) => setDob(value as SetStateAction<CalendarDate>)} />
                 <Input color="secondary" type="email" variant="bordered" label="Email" isRequired onChange={(e) => setEmail(e.target.value)} />
-                <Input color="secondary" type="number" variant="bordered" label="Phone Number" isRequired onChange={(e) => setPhone(Number(e.target.value))} />
+                <Input color="secondary" type="number" variant="bordered" label="Phone Number" min="0" isRequired onChange={(e) => setPhone(Number(e.target.value))} />
             </div>
             <div className={styles.riderPassword}>
                 <Input label="Password" variant="bordered" endContent={
@@ -139,11 +142,11 @@ const RiderCRUD: React.FC<DriverCRUDProps> = ({ TextProps }) => {
             <div className={styles.riderCRUD}>
                 <Input color="secondary" type="text" variant="bordered" label="Make" isRequired onChange={(e) => setMake(e.target.value)} />
                 <Input color="secondary" type="text" variant="bordered" label="Model" isRequired onChange={(e) => setModel(e.target.value)} />
-                <Input color="secondary" type="number" variant="bordered" label="Year" isRequired onChange={(e) => setYear(e.target.value)} />
+                <Input color="secondary" type="number" variant="bordered" min="1" label="Year" isRequired onChange={(e) => setYear(Number(e.target.value))} />
                 <Input color="secondary" type="text" variant="bordered" label="Plate" isRequired onChange={(e) => setPlate(e.target.value)} />
             </div>
             <div className={styles.riderPassword}>
-                <Input color="secondary" className="max-w-xs" type="text" variant="bordered" label="Seats" isRequired onChange={(e) => setSeats(Number(e.target.value))} />
+                <Input color="secondary" className="max-w-xs" type="number" min="1" variant="bordered" label="Seats" isRequired onChange={(e) => setSeats(Number(e.target.value))} />
             </div>
             <br />
             <Button variant="ghost" color="secondary" onClick={handleClick}>{TextProps}</Button>

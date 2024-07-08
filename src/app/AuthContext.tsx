@@ -27,20 +27,6 @@ const getCookies = (): { [key: string]: string } => {
     }, {} as { [key: string]: string });
 };
 
-const getUserData = async (token: any) => {
-    const response = await fetch("http://127.0.0.1:3001/user", {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-    });
-    if (response.ok) {
-        const data = await response.json();
-        return data;
-    }
-}
-
 const verifyToken = async (token: any) => {
     try {
         const response = await fetch("http://127.0.0.1:3001/verifyauth", {
@@ -57,6 +43,21 @@ const verifyToken = async (token: any) => {
         console.log(error);
     }
 }
+
+const getUserData = async (token: any) => {
+    const response = await fetch("http://127.0.0.1:3001/user", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+    });
+    if (response.ok) {
+        const data = await response.json();
+        return data;
+    }
+}
+
 
 export const AuthProvider: FunctionComponent<{ children: ReactNode }> = ({ children }) => {
     const [tokenExists, setokenExists] = useState<boolean>(false);

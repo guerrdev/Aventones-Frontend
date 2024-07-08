@@ -11,8 +11,7 @@ import { Image, RadioGroup, Radio } from "@nextui-org/react";
 
 export default function RegisterPage() {
 
-    const [mounted, setMounted] = useState(false)
-    const { theme, setTheme } = useTheme()
+    const { theme } = useTheme()
     const textD = "Register as Driver";
     const textR = "Register as Rider";
 
@@ -38,11 +37,6 @@ export default function RegisterPage() {
             router.push('/');
         }
     }, [tokenExists, router]);
-
-    useEffect(() => {
-        setMounted(true)
-    }, [])
-    if (!mounted) return null
 
     return (
         <>
@@ -83,7 +77,6 @@ export default function RegisterPage() {
                 <br />
                 {switchCrud()}
             </div>
-            <ToastContainer />
         </>
     );
 }

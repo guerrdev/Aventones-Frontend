@@ -223,7 +223,7 @@ const ProfilePage: React.FC = () => {
                             <Input type="text" variant="bordered" color="secondary" label="Make" value={make} isReadOnly={isReadOnly} onChange={(e) => setMake(e.target.value)} /><br />
                             <Input type="text" variant="bordered" color="secondary" label="Model" value={model} isReadOnly={isReadOnly} onChange={(e) => setModel(e.target.value)} /><br />
                             <Input type="Number" variant="bordered" color="secondary" label="Year" value={year.toString()} isReadOnly={isReadOnly} onChange={(e) => setYear(Number(e.target.value))} /><br />
-                            <Input type="Number" variant="bordered" color="secondary" label="Seats" value={seats.toString()} isReadOnly={isReadOnly} onChange={(e) => setSeats(Number(e.target.value))} /><br />
+                            <Input type="Number" variant="bordered" color="secondary" min="1" label="Seats" value={seats.toString()} isReadOnly={isReadOnly} onChange={(e) => setSeats(Number(e.target.value))} /><br />
                         </>)}
                 </CardBody>
                 <Divider />
