@@ -1,34 +1,34 @@
 'use client'
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import { useTheme } from "next-themes";
 import styles from "./login.module.css";
 import { useAuth } from "../AuthContext";
-import { useRouter } from 'next/navigation'
-import { ToastContainer } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from "react";
-import { EyeFilledIcon } from "../components/icons/EyeFilledIcon"
+import { EyeFilledIcon } from "../components/icons/EyeFilledIcon";
 import { Button, Input, Image, RadioGroup, Radio } from "@nextui-org/react";
-import { EyeSlashFilledIcon } from "../components/icons/EyeSlashFilledIcon"
+import { EyeSlashFilledIcon } from "../components/icons/EyeSlashFilledIcon";
+import { useGoogleLogin } from '@react-oauth/google';
 
 export default function LoginPage() {
-
-    const { theme } = useTheme()
+    const { theme } = useTheme();
     const [selected, setSelected] = React.useState("rider");
     const { tokenExists, setokenExists } = useAuth();
-    const router = useRouter()
+    const router = useRouter();
     const [isVisible, setIsVisible] = React.useState(false);
-    const toggleVisibility = () => setIsVisible(!isVisible);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+    const toggleVisibility = () => setIsVisible(!isVisible);
 
     const handleClick = () => {
         let user = {
             email: email.toLowerCase(),
             password: password,
             type: selected
-        }
+        };
         postSession(user);
-    }
+    };
 
     const toastNOK = () =>
         toast('Check Email or Password', {
@@ -48,7 +48,7 @@ export default function LoginPage() {
                 },
                 body: JSON.stringify(user)
             });
-            if (response && response.status == 201) {
+            if (response && response.status === 201) {
                 const data = await response.json();
                 setokenExists(true);
                 document.cookie = `token=${data.token}; max-age=86400; path=/`;
@@ -61,7 +61,7 @@ export default function LoginPage() {
         } catch (error) {
             console.error("Error:", error);
         }
-    }
+    };
 
     const getUser = async (token: any) => {
         const response = await fetch('http://127.0.0.1:3001/user', {
@@ -73,7 +73,49 @@ export default function LoginPage() {
         });
         const data = await response.json();
         localStorage.setItem('profilePic', data.profilePicture);
-    }
+    };
+
+    const handleGoogleLoginSuccess = async (tokenResponse: { access_token: any; }) => {
+        const user = {
+            token: tokenResponse.access_token,
+            type: selected
+        };
+        postGoogleSession(user);
+    };
+
+    const handleGoogleLoginError = (error: any) => {
+        console.error("Google Login Error:", error);
+        toastNOK();
+    };
+
+    const login = useGoogleLogin({
+        onSuccess: handleGoogleLoginSuccess,
+        onError: handleGoogleLoginError,
+    });
+
+    const postGoogleSession = async (user: { token: any; type: string; }) => {
+        try {
+            const response = await fetch("http://127.0.0.1:3001/auth/google", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(user)
+            });
+            if (response && response.status === 201) {
+                const data = await response.json();
+                setokenExists(true);
+                document.cookie = `token=${data.token}; max-age=86400; path=/`;
+                getUser(data.token);
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                window.location.reload();
+            } else {
+                toastNOK();
+            }
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    };
 
     useEffect(() => {
         if (tokenExists) {
@@ -84,27 +126,35 @@ export default function LoginPage() {
     return (
         <>
             <div className={styles.loginMain}>
-                {theme === "dark" ? (selected === "rider" ? (<Image
-                    isBlurred
-                    src="/userlight.png"
-                    alt="User Icon"
-                    disableSkeleton={true}
-                />) : (<Image
-                    isBlurred
-                    src="/sedanlight.png"
-                    alt="Car Icon"
-                    disableSkeleton={true}
-                />)) : (selected === "rider" ? (<Image
-                    isBlurred
-                    src="/userdark.png"
-                    alt="User Icon"
-                    disableSkeleton={true}
-                />) : (<Image
-                    isBlurred
-                    src="/sedandark.png"
-                    alt="Car Icon"
-                    disableSkeleton={true}
-                />))}
+                {theme === "dark" ? (selected === "rider" ? (
+                    <Image
+                        isBlurred
+                        src="/userlight.png"
+                        alt="User Icon"
+                        disableSkeleton={true}
+                    />
+                ) : (
+                    <Image
+                        isBlurred
+                        src="/sedanlight.png"
+                        alt="Car Icon"
+                        disableSkeleton={true}
+                    />
+                )) : (selected === "rider" ? (
+                    <Image
+                        isBlurred
+                        src="/userdark.png"
+                        alt="User Icon"
+                        disableSkeleton={true}
+                    />
+                ) : (
+                    <Image
+                        isBlurred
+                        src="/sedandark.png"
+                        alt="Car Icon"
+                        disableSkeleton={true}
+                    />
+                ))}
                 <h1 className={styles.h1Title}>Log In into Aventones</h1>
                 <RadioGroup
                     label="Are you a Rider or a Driver?"
@@ -117,17 +167,28 @@ export default function LoginPage() {
                     <Radio value="driver">Driver</Radio>
                 </RadioGroup>
                 <br />
-                <Input className="max-w-xs" type="text" color="secondary" variant="bordered" label="Email" isRequired onChange={(e) => setEmail(e.target.value)} />
+                <Input
+                    className="max-w-xs"
+                    type="text"
+                    color="secondary"
+                    variant="bordered"
+                    label="Email"
+                    isRequired
+                    onChange={(e) => setEmail(e.target.value)}
+                />
                 <br />
-                <Input label="Password" variant="bordered" endContent={
-                    <button id={styles.eyeButton} className="focus:outline-none" type="button" onClick={toggleVisibility}>
-                        {isVisible ? (
-                            <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
-                        ) : (
-                            <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
-                        )}
-                    </button>
-                }
+                <Input
+                    label="Password"
+                    variant="bordered"
+                    endContent={
+                        <button id={styles.eyeButton} className="focus:outline-none" type="button" onClick={toggleVisibility}>
+                            {isVisible ? (
+                                <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                            ) : (
+                                <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                            )}
+                        </button>
+                    }
                     type={isVisible ? "text" : "password"}
                     className="max-w-xs"
                     isRequired
@@ -135,7 +196,12 @@ export default function LoginPage() {
                     color="secondary"
                 />
                 <br />
-                <Button size="lg" variant="ghost" color="secondary" onPress={handleClick}>Login</Button>
+                <Button size="lg" variant="ghost" color="secondary" onPress={handleClick}>
+                    Login
+                </Button>
+                <Button size="lg" variant="ghost" color="secondary" onClick={() => login()}>
+                    Sign in with Google
+                </Button>
             </div>
             <ToastContainer />
         </>
