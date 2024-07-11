@@ -4,7 +4,7 @@ import styles from "./bookingTable.module.css";
 import React, { useEffect, useState } from "react";
 import { EyeIcon } from "../../components/icons/EyeIcon";
 import AventonesFetcher from "../utils/aventonesFetcher";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Tooltip, User, Spinner } from "@nextui-org/react";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Tooltip, User, Spinner, Input, Button } from "@nextui-org/react";
 
 interface Booking {
     id: string;
@@ -113,23 +113,31 @@ export default function BookingTable() {
             <h1 className="text-2xl text-bold text-center">Aventones Available</h1>
             <br />
             <div className="flex justify-center gap-2 mb-4">
-                <input
+                <Input
                     type="text"
-                    placeholder="Pickup Location"
+                    className='max-w-xs'
+                    variant='bordered'
+                    color='secondary'
+                    label="Pickup Location"
                     value={searchFrom}
                     onChange={(e) => setSearchFrom(e.target.value)}
-                    className="input"
                 />
-                <input
+                <Input
                     type="text"
-                    placeholder="Destination"
+                    className='max-w-xs'
+                    variant='bordered'
+                    color='secondary'
+                    label="Destination"
                     value={searchTo}
                     onChange={(e) => setSearchTo(e.target.value)}
-                    className="input"
                 />
-                <button onClick={handleSearch} className="button">Search</button>
-                <button onClick={handleReset} className="button">Reset</button>
+
             </div>
+            <div className="flex justify-center gap-2">
+                <Button variant='ghost' color='secondary' onPress={handleSearch}>Search</Button>
+                <Button variant='ghost' color='secondary' onPress={handleReset}>Reset</Button>
+            </div>
+            <br />
             <Table aria-label="Table with Aventones Available to you" >
                 <TableHeader columns={columns}>
                     {(column) => (

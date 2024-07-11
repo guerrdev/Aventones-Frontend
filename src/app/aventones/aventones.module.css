@@ -1,6 +1,6 @@
 .mainAventones {
     flex-direction: column;
-    padding: 4rem;
+    padding: 2rem;
     align-items: center;
     min-height: 100vh;
     font-family: var(--monserrat);

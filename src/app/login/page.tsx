@@ -8,7 +8,7 @@ import React, { useEffect, useState } from "react";
 import { EyeFilledIcon } from "../components/icons/EyeFilledIcon";
 import { Button, Input, Image, RadioGroup, Radio } from "@nextui-org/react";
 import { EyeSlashFilledIcon } from "../components/icons/EyeSlashFilledIcon";
-import { useGoogleLogin } from '@react-oauth/google';
+import { GoogleLogin, GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
 
 export default function LoginPage() {
     const { theme } = useTheme();
@@ -88,10 +88,17 @@ export default function LoginPage() {
         toastNOK();
     };
 
-    const login = useGoogleLogin({
-        onSuccess: handleGoogleLoginSuccess,
-        onError: handleGoogleLoginError,
-    });
+    // const login = useGoogleLogin({
+    //     onSuccess: handleGoogleLoginSuccess,
+    //     onError: handleGoogleLoginError,
+    // });
+
+    const loginSuccessResponseHandler = (credentialResponse: any) => {
+        console.log(credentialResponse);
+    }
+    const loginErrorResponseHandler = () => {
+        alert("Login failed, please try again");
+    }
 
     const postGoogleSession = async (user: { token: any; type: string; }) => {
         try {
@@ -199,11 +206,19 @@ export default function LoginPage() {
                 <Button size="lg" variant="ghost" color="secondary" onPress={handleClick}>
                     Login
                 </Button>
-                <Button size="lg" variant="ghost" color="secondary" onClick={() => login()}>
-                    Sign in with Google
-                </Button>
+                <br />
+                {/* <GoogleOAuthProvider clientId="550847600531-7ndbqri18d7451kut15oq4b6c4hm1vko.apps.googleusercontent.com">
+                    <GoogleLogin
+                        onSuccess={loginSuccessResponseHandler}
+                        onError={loginErrorResponseHandler}
+                        theme="filled_blue"
+                        shape="circle"
+                        text="continue_with"
+                    />
+                </GoogleOAuthProvider> */}
             </div>
             <ToastContainer />
         </>
     );
 }
+
