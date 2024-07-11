@@ -18,11 +18,11 @@ export default function BookingDetailsPage() {
     const { theme } = useTheme()
     const [time, setTime] = React.useState<TimeInputValue>();
     const [pickup, setPickup] = useState("");
-    const [riders, setRiders] = useState<string[]>([]);
     const [destination, setDestination] = useState("");
     const [days, setDays] = React.useState([]);
     const [fee, setFee] = useState(Number);
     const [seats, setSeats] = useState(Number);
+    const [driverId, setDriverId] = useState<any>();
 
     const getToken = () => {
         const tokenRow = document.cookie.split(';').find((row) => row.trim().startsWith('token='));
@@ -34,27 +34,27 @@ export default function BookingDetailsPage() {
 
     const handleClick = () => {
         const decodedToken: { userId: string; } = jwtDecode(getToken() as string);
-        riders.push(decodedToken.userId);
-        let booking = {
-            riders: riders,
-            seatsAvailable: seats - 1,
+        const bookingId = localStorage.getItem('bookingId');
+        let request = {
+            rider: decodedToken.userId,
+            driver: driverId._id,
+            booking: bookingId
         };
-        saveASpot(booking);
+        saveASpot(request);
     }
 
-    const saveASpot = async (booking: any) => {
-        const bookingId = localStorage.getItem('bookingId');
+    const saveASpot = async (request: any) => {
         const token = getToken();
-        const response = await fetch(`http://127.0.0.1:3001/booking/?id=${bookingId}`, {
-            method: 'PATCH',
+        const response = await fetch('http://127.0.0.1:3001/reqaventon', {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify(booking)
+            body: JSON.stringify(request)
         });
         if (response.ok) {
-            toast('You have saved a spot!', {
+            toast('You have requested a spot!', {
                 hideProgressBar: true,
                 autoClose: 2000,
                 type: 'success',
@@ -65,7 +65,7 @@ export default function BookingDetailsPage() {
             await new Promise(resolve => setTimeout(resolve, 1500));
             router.push('/');
         } else {
-            toast('Error while saving a spot!', {
+            toast('Error while requesting a spot!', {
                 hideProgressBar: true,
                 autoClose: 2000,
                 type: 'error',
@@ -74,6 +74,41 @@ export default function BookingDetailsPage() {
             });
         }
     }
+
+
+
+    // const saveASpot = async (booking: any) => {
+    //     const bookingId = localStorage.getItem('bookingId');
+    //     const token = getToken();
+    //     const response = await fetch(`http://127.0.0.1:3001/booking/?id=${bookingId}`, {
+    //         method: 'PATCH',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             'Authorization': `Bearer ${token}`
+    //         },
+    //         body: JSON.stringify(booking)
+    //     });
+    //     if (response.ok) {
+    //         toast('You have saved a spot!', {
+    //             hideProgressBar: true,
+    //             autoClose: 2000,
+    //             type: 'success',
+    //             theme: theme,
+    //             position: 'top-left'
+    //         });
+    //         localStorage.removeItem('bookingId');
+    //         await new Promise(resolve => setTimeout(resolve, 1500));
+    //         router.push('/');
+    //     } else {
+    //         toast('Error while saving a spot!', {
+    //             hideProgressBar: true,
+    //             autoClose: 2000,
+    //             type: 'error',
+    //             theme: theme,
+    //             position: 'top-left'
+    //         });
+    //     }
+    // }
 
     useEffect(() => {
         const bookingId = localStorage.getItem('bookingId');
@@ -87,13 +122,13 @@ export default function BookingDetailsPage() {
                 });
                 if (response.ok) {
                     const data = await response.json();
+                    setDriverId(data.driver);
                     setDestination(data.destination);
                     setTime(parseTime(data.time));
                     setDays(data.days);
                     setSeats(data.seatsAvailable);
                     setFee(data.fee);
                     setPickup(data.pickup);
-                    setRiders(data.riders);
                 } else {
                     console.error('Failed to fetch booking data');
                     router.push('/login');
@@ -182,7 +217,7 @@ export default function BookingDetailsPage() {
                             <ModalHeader className="flex flex-col gap-1">Warning</ModalHeader>
                             <ModalBody>
                                 <p>
-                                    Are you sure you want to save a spot on this Aventon?
+                                    Are you sure you want to request a spot on this Aventon?
                                 </p>
                             </ModalBody>
                             <ModalFooter>
