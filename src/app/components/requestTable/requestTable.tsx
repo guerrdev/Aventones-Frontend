@@ -66,7 +66,7 @@ export default function RequestTable() {
                 return (
                     <div className="relative flex justify-center items-center gap-1">
                         <Tooltip color="secondary" content="View Details about this Request">
-                            <span onClick={() => { modal1Disclosure.onOpen(); setRider(request.rider); setBooking(request.booking); }} className="text-lg text-secondary cursor-pointer active:opacity-50">
+                            <span onClick={() => { modal1Disclosure.onOpen(); setRider(request.rider); setBooking(request.booking); setRequestId(request.id); }} className="text-lg text-secondary cursor-pointer active:opacity-50">
                                 <EyeIcon />
                             </span>
                         </Tooltip>
@@ -173,17 +173,17 @@ export default function RequestTable() {
                 <ModalContent>
                     {(onClose) => (
                         <>
-                            <ModalHeader className="flex flex-col gap-1">Details about the User</ModalHeader>
+                            <ModalHeader className="flex flex-col gap-1">Warning</ModalHeader>
                             <ModalBody>
                                 <p>
-                                    waos
+                                    Are you sure you want to delete this request?
                                 </p>
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="secondary" variant="ghost" onPress={onClose}>
                                     Cancel
                                 </Button>
-                                <Button color="danger" variant="ghost" onPress={() => { UpdateBooking(); onClose() }}>
+                                <Button color="danger" variant="ghost" onPress={() => { deleteRequest(); onClose() }}>
                                     Accept
                                 </Button>
                             </ModalFooter>
