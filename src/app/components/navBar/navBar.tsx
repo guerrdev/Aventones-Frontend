@@ -73,8 +73,7 @@ export default function NavBar() {
                     </Link>
                 </NavbarItem>
                 <NavbarItem>
-                    {tokenExists ? (tokenExists && role === 'Driver' ? (<Link color="foreground" href="/aventones">My Aventones</Link>) :
-                        null) : null}
+                    {tokenExists ? (tokenExists && role === 'Driver' ? <Link color="foreground" href="/aventones">My Aventones</Link> : null) : null}
                 </NavbarItem>
                 <NavbarItem>
                     {tokenExists ? (<Link color="foreground" href="/settings">Settings</Link>) : null}
@@ -109,13 +108,8 @@ export default function NavBar() {
                             <div aria-label="User Email" className="font-semibold">Signed in as</div>
                             <div aria-label="User Email" className="font-semibold">{email}</div>
                         </DropdownItem>
-                        {role === 'Driver' ? (
-                            <DropdownItem aria-label="aventones" key="aventones" onPress={() => Router.push('/aventones')}>
-                                My Aventones
-                            </DropdownItem>
-                        ) : (
-                            <></>
-                        )}
+                        {role === 'Driver' ? <DropdownItem aria-label="aventones" key="aventones" onPress={() => Router.push('/aventones')}>My Aventones</DropdownItem> :
+                            <DropdownItem> <div aria-label="Quote" className="font-semibold">Lets Ride Together!</div> </DropdownItem>}
                         <DropdownItem aria-label="User Profile" key="profile" onPress={() => Router.push('/profile')}>My Profile</DropdownItem>
                         <DropdownItem aria-label="User Settings" key="settings" onPress={() => Router.push('/settings')}>Settings</DropdownItem>
                         {/* <DropdownItem aria-label="Help" key="help_and_feedback" onPress={() => Router.push('/help')}>Help & Feedback</DropdownItem> */}
@@ -172,28 +166,13 @@ export default function NavBar() {
                 ) : (
                     <React.Fragment>
                         <NavbarMenuItem>
-                            <Link color="secondary" href="/">Home</Link>
+                            <Link color="foreground" href="/">Home</Link>
                         </NavbarMenuItem>
                         <NavbarMenuItem>
-                            {!tokenExists ? <Link color="secondary" href="/login">Log In</Link> : null}
+                            <Link color="secondary" href="/login">Log In</Link>
                         </NavbarMenuItem>
                         <NavbarMenuItem>
-                            {!tokenExists ? <Link color="secondary" href="/register">Register</Link> : null}
-                        </NavbarMenuItem>
-                        <NavbarMenuItem>
-                            {tokenExists ? (tokenExists && role === 'Driver' ? (<Link color="foreground" href="/aventones">My Aventones</Link>) :
-                                <></>) : null}
-                        </NavbarMenuItem>
-                        <NavbarMenuItem>
-                            {tokenExists ? (<Link color="foreground" href="/settings">Settings</Link>) : null}
-                        </NavbarMenuItem>
-                        <NavbarMenuItem>
-                            {tokenExists ? (tokenExists ? (<Link color="foreground" href="/profille">My Profile</Link>) :
-                                <></>) : null}
-                        </NavbarMenuItem>
-                        <NavbarMenuItem>
-                            {tokenExists ? (tokenExists && role === 'Driver' ? (<Link color="foreground" href="/aventones">My Aventones</Link>) :
-                                <></>) : null}
+                            <Link color="secondary" href="/register">Sign Up</Link>
                         </NavbarMenuItem>
                     </React.Fragment>
                 )}

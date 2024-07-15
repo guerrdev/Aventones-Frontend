@@ -30,7 +30,7 @@ const ProfilePage: React.FC = () => {
         const base64: string = await convert64(file);
 
         if (base64.length > 2097152) {
-            toast('The selected Image is larger than 760KB!', {
+            toast('The selected Image is larger than 1.5MB!', {
                 hideProgressBar: true,
                 autoClose: 2000,
                 type: 'error',
@@ -201,6 +201,8 @@ const ProfilePage: React.FC = () => {
                             <br />
                             <input type="file" accept='.jpg, .png, .jpeg' color="secondary" disabled={isReadOnly} onChange={(e) => e.target.files && uploadImg(e.target.files[0])} />
                             <br />
+                            <Chip variant='bordered' color="danger">1.5MB Max per image</Chip>
+                            <br />
                         </>) : (
                         <>
                             <Input type="text" variant="bordered" color="secondary" label="First Name" value={fname} isReadOnly={isReadOnly} onChange={(e) => setFname(e.target.value)} /><br />
@@ -212,7 +214,8 @@ const ProfilePage: React.FC = () => {
                             </Tooltip>
                             <br />
                             <input type="file" accept='.jpg, .png, .jpeg' color="secondary" disabled={isReadOnly} onChange={(e) => e.target.files && uploadImg(e.target.files[0])} />
-                            <Chip color="default">760KB Max per image</Chip>
+                            <br />
+                            <Chip variant='bordered' color="danger">1.5MB Max per image</Chip>
                             <br />
                             <Card>
                                 <CardBody>

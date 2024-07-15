@@ -51,7 +51,12 @@ const aventonesFetcher = async () => {
                 avatar: booking.driver.profilePicture,
                 car: `${booking.driver.make + " " + booking.driver.model + " " + booking.driver.year}`
             }
-            bookings.push(DBbooking);
+            if (DBbooking.seats > 0){
+                bookings.push(DBbooking);
+            }
+            if (token && decodedToken && decodedToken.role === 'driver') {
+                bookings.push(DBbooking);
+            }
         }
     } else {
         console.error('An unexpected error happened:', response?.statusText);
