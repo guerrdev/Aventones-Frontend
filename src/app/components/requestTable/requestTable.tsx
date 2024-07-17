@@ -13,6 +13,7 @@ interface Request {
     id: string;
     rider: any;
     booking: any;
+    avatar: any;
 }
 
 export default function RequestTable() {
@@ -48,7 +49,7 @@ export default function RequestTable() {
             case "rider":
                 return (
                     <User
-                        avatarProps={{ radius: "lg", src: request.rider.profilePicture ? undefined : '/userdark.png', }}
+                        avatarProps={{ radius: "lg", src: request.avatar}}
                         description={request.rider.last_name}
                         name={request.rider.first_name}
                     >

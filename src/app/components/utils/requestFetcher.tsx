@@ -1,9 +1,10 @@
 'use client'
 
+import { avatar } from "@nextui-org/theme";
 import { jwtDecode } from "jwt-decode";
 
 const aventonesFetcher = async () => {
-    const requests: { id: string; rider: string; booking: string; }[] = [];
+    const requests: { id: string; rider: string; booking: string; avatar: any;}[] = [];
 
     let response;
     const getToken = () => {
@@ -47,6 +48,7 @@ const aventonesFetcher = async () => {
             let DBrequest = {
                 id: request._id,
                 rider: request.rider,
+                avatar: request.rider.profilePicture,
                 booking: request.booking,
             }
             requests.push(DBrequest);

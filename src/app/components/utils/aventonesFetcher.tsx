@@ -51,7 +51,7 @@ const aventonesFetcher = async () => {
                 avatar: booking.driver.profilePicture,
                 car: `${booking.driver.make + " " + booking.driver.model + " " + booking.driver.year}`
             }
-            if (DBbooking.seats > 0){
+            if (DBbooking.seats > 0 && decodedToken && decodedToken.role === 'rider' || !token) {
                 bookings.push(DBbooking);
             }
             if (token && decodedToken && decodedToken.role === 'driver') {
