@@ -27,7 +27,7 @@ const getCookies = (): { [key: string]: string } => {
     }, {} as { [key: string]: string });
 };
 
-const verifyToken = async (token: any) => {
+const verifyToken = async (token: string) => {
     try {
         const response = await fetch("http://127.0.0.1:3001/verifyauth", {
             method: "POST",
@@ -44,7 +44,7 @@ const verifyToken = async (token: any) => {
     }
 }
 
-const getUserData = async (token: any) => {
+const getUserData = async (token: string) => {
     const response = await fetch("http://127.0.0.1:3001/user", {
         method: "GET",
         headers: {

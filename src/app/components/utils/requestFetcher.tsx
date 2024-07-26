@@ -3,8 +3,15 @@
 import { avatar } from "@nextui-org/theme";
 import { jwtDecode } from "jwt-decode";
 
+interface requests {
+    id: string;
+    rider: string;
+    booking: string;
+    avatar: string;
+}[];
+
 const aventonesFetcher = async () => {
-    const requests: { id: string; rider: string; booking: string; avatar: any;}[] = [];
+    const requests: requests[] = [];
 
     let response;
     const getToken = () => {

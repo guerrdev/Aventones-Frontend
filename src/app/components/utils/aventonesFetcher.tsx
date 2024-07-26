@@ -2,9 +2,20 @@
 
 import { jwtDecode } from "jwt-decode";
 
-const aventonesFetcher = async () => {
+interface bookings {
+    id: string;
+    driver: string;
+    from: string;
+    to: string;
+    seats: number;
+    fee: string;
+    avatar: string;
+    car: string;
+}[];
 
-    const bookings: { id: any; driver: string; from: any; to: any; seats: number; fee: string; avatar: any; car: string; }[] = [];
+const aventonesFetcher = async () => {
+    const bookings: bookings[] = [];
+
     let response;
     const getToken = () => {
         const tokenRow = document.cookie.split(';').find((row) => row.trim().startsWith('token='));
@@ -51,7 +62,7 @@ const aventonesFetcher = async () => {
                 avatar: booking.driver.profilePicture,
                 car: `${booking.driver.make + " " + booking.driver.model + " " + booking.driver.year}`
             }
-            if (DBbooking.seats > 0 && decodedToken && decodedToken.role === 'rider' || !token) {
+            if (DBbooking.seats > 0 && decodedToken && decodedToken.role === 'rider' || DBbooking.seats > 0 && !token) {
                 bookings.push(DBbooking);
             }
             if (token && decodedToken && decodedToken.role === 'driver') {
